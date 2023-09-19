@@ -1,122 +1,122 @@
 import streamlit as st
 import pandas as pd
-import geopandas as gpd
-import numpy as np
-import folium
-from folium import Choropleth
-from streamlit_folium import folium_static, st_folium
 import json
 import requests
+import plotly.express as px
 
+# Set the layout configuration of the Streamlit app
 st.set_page_config(layout="wide")
 
-url = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
-federal_states_geojson_url = 'https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json'
-# add communities url 
+# URL constants
+DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
+GEOJSON_URL = 'https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json'
 
-# Fetch data
-response = requests.get(url)
-gdf = gpd.read_file(federal_states_geojson_url)
+# Fetch data from API
+def fetch_data(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return json.loads(response.text)
+    else:
+        return None
 
-# Check if request was successful
-if response.status_code == 200:
-    # parse json data
-    raw_json = json.loads(response.text)
-    print("Success")
-else:
-    print("Fail")
+# Data preprocessing
+def preprocess_data(raw_json):
+    data = raw_json[0]["data"]
+    df = pd.DataFrame(data).dropna(axis=1, how='all')
+    drop_cols = ['id_opendata', 'id_region_type', 'region_type', 'year', 'internal_id']
+    df.drop(drop_cols, axis=1, inplace=True)
+    df.rename(columns={'internal_id_1': 'building_type', 'internal_id_2': 'heat_source'}, inplace=True)
+    df['region'].replace(dict(zip(df['id_region'], df['region'])), inplace=True)
+    df.drop(['id_region'], axis=1, inplace=True)
+    return df
 
-# Pre-Processing -> export
-data = raw_json[0]["data"]
-df = pd.DataFrame(data)
-df = df.dropna(axis=1, how='all')
-df = df.drop(['id_opendata', 'id_region_type', 'region_type', 'year', 'internal_id'], axis=1)
-df = df.rename(columns={'internal_id_1': 'building_type', 'internal_id_2': 'heat_source'})
+# Update data frame with human-readable categories
+def update_df_categories(df):
+    building_type_dict = {
+        1: 'One- and Two-family Houses',
+        6: 'Apartment Buildings (3-6)',
+        9: 'Row Houses',
+        11: 'Semi-detached Houses',
+        38: 'Apartment Buildings: 7 and More Apartments',
+        100: 'Total'
+    }
+    heat_source_dict = {
+        0: 'Total',
+        1: 'Air',
+        2: 'Ground Probe',
+        3: 'Ground Collector',
+        4: 'Solar-Thermal Energy and Ice Storage'
+    }
+    df['building_type'].replace(building_type_dict, inplace=True)
+    df['heat_source'].replace(heat_source_dict, inplace=True)
 
-region_dict = dict(zip(df['id_region'], df['region']))
-df = df.drop(['id_region'], axis=1)
-building_type_dict = {
-    1: 'One- and Two-family Houses',
-    6: 'Apartment Buildings (3-6)',
-    9: 'Row Houses',
-    11: 'Semi-detached Houses',
-    38: 'Apartment Buildings: 7 and More Apartments',
-    100: 'Total'
-}
-
-heat_source_dict = {
-    0: 'Total',
-    1: 'Air',
-    2: 'Ground Probe',
-    3: 'Ground Collector',
-    4: 'Solar-Thermal Energy and Ice Storage'
-}
-
-federal_states = list(df['region'].unique())
-
-# Rename df content
-df['building_type'] = df['building_type'].replace(building_type_dict)
-df['heat_source'] = df['heat_source'].replace(heat_source_dict)
-
-#federal_states
-#st.table(df)
-
-# min_lat, max_lat = 46.1657, 56.1657
-# min_lon, max_lon = 5.4515, 15.4515
-# functions
-def create_map():
-    m = folium.Map(
-        location=[51.1657, 10.4515],
-        zoom_start=6,
-        zoom_control=False,
-        tiles="cartodbdark_matter",
+# Create and display map with choropleth layer using Plotly
+def create_map(df):
+    fig = px.choropleth_mapbox(df.query("building_type == 'Total' & heat_source == 'Total'"), 
+                               geojson=GEOJSON_URL, 
+                               locations='region', 
+                               color='value',
+                               featureidkey="properties.name",
+                               color_continuous_scale="RdYlGn",
+                               mapbox_style="carto-darkmatter",
+                               opacity=0.7)
+    fig.update_geos(fitbounds="locations")
+    fig.update_layout(
+        mapbox_zoom=5,
+        mapbox_center={"lat": 51.1657, "lon": 10.4515},
+        autosize=False,
+        width=800, 
+        height=800
     )
-    folium.Choropleth(
-        geo_data=federal_states_geojson_url,
-        name='choropleth',
-        data=df.query("building_type == 'Total' & heat_source == 'Total'"),
-        columns=['region', 'value'],
-        key_on='feature.properties.name',
-        fill_color='RdYlGn',
-        fill_opacity=1,
-        line_opacity=0.2,
-        legend_name='Share of Buildings Suited for Heat Pumps (%)'
-    ).add_to(m)
-    st_folium(m)
+    st.plotly_chart(fig, use_container_width=True)
 
-# Create frontend
-# Set title
+
+# Fetch and preprocess data
+raw_json = fetch_data(DATA_URL)
+if raw_json:
+    df = preprocess_data(raw_json)
+    update_df_categories(df)
+else:
+    st.error("Failed to fetch data")
+
+# Generate unique federal states for selection
+federal_states = df['region'].unique()
+
+# Create Streamlit frontend
 st.title("Heatpump Potentials in Germany")
 st.divider()
 
-# Set first row of columns
-col_state_selection, col_building_type, col_heat_source = st.columns(3)
-st.divider()
-# Set map and stats column
-col_map, col_stats = st.columns([0.7,0.3], gap="medium")
+# Layout columns
+col_state, col_building, col_heat = st.columns(3)
+col_map, col_stats = st.columns([0.7, 0.3])
+
+# State selection
+with col_state:
+    selected_state = st.selectbox("Select federal state", 
+                                  options=["(Deutschland)"] + sorted(federal_states),
+                                  key="selected_federal_state"
+                                  )
 
 
-# Populate columns
-with col_state_selection:
-    selected_state = st.selectbox(
-        "Select federal state", options=federal_states
-        )
+# Building type selection
+with col_building:
+    selected_building = st.radio("Select building type", 
+                                 options=df['building_type'].unique(),
+                                 key="selected_building_type"
+                                 )
 
-with col_building_type:
-    selected_building_type = st.radio(
-        "Select building type", options=df["building_type"].unique()
-        )
-with col_heat_source:
-    selected_heat_source = st.radio(
-        "Select heat source", options=df["heat_source"].unique()
-        )
+# Heat source selection
+with col_heat:
+    selected_heat = st.radio("Select heat source", 
+                             options=df['heat_source'].unique(),
+                             key="selected_heat_source"
+                             )
 
+# Display map
 with col_map:
-    create_map()
+    create_map(df)
 
+# Display statistics
 with col_stats:
-    # st.success("")
-    # Dummy stats
     st.subheader("Stats")
-    st.bar_chart(dict(data=[1,2,3,7,5]))
-
+    st.bar_chart({'Data': [1, 2, 3, 7, 5]}) # Dummy stats for now
