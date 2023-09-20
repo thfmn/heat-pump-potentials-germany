@@ -7,6 +7,7 @@ import plotly.express as px
 # Set the layout configuration of the Streamlit app
 st.set_page_config(layout="wide")
 
+
 # URL constants
 DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
 GEOJSON_URL = 'https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json'
@@ -20,6 +21,10 @@ if 'selected_building_type' not in st.session_state:
 
 if 'selected_heat_source' not in st.session_state:
     st.session_state.selected_heat_source = "Total"
+
+# -- Display session_state
+st.write(st.session_state)
+# -- 
 
 # Fetch data from API
 def fetch_data(url):
@@ -104,7 +109,7 @@ col_map, col_stats = st.columns([0.7, 0.3])
 with col_state:
     selected_state = st.selectbox("Select federal state", 
                                   options=["(Deutschland)"] + sorted(federal_states),
-                                  key="selected_federal_state"
+                                  key="selected_state"
                                   )
 
 
