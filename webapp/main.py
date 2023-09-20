@@ -3,10 +3,10 @@ import pandas as pd
 import json
 import requests
 import plotly.express as px
+import duckdb
 
 # Set the layout configuration of the Streamlit app
 st.set_page_config(layout="wide")
-
 
 # URL constants
 DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
@@ -86,13 +86,37 @@ def create_map(df):
     st.plotly_chart(fig, use_container_width=True)
 
 
-# Fetch and preprocess data
+# Fetch and preprocess data (dataframe)
 raw_json = fetch_data(DATA_URL)
 if raw_json:
     df = preprocess_data(raw_json)
     update_df_categories(df)
 else:
     st.error("Failed to fetch data")
+
+# Connect to temp DuckDB database
+conn = duckdb.connect(database='memory', read_only=False)
+
+# Check if table exists. If not, create table
+tables = conn.execute("SHOW TABLES").fetchall()
+if('data',) not in tables:
+    conn.execute("CREATE TABLE data AS SELECT * FROM df")
+
+
+# Create SQL query
+sql_query = f"""
+SELECT * FROM data
+"""
+
+# Execute SQL query and save result set into dataframe
+result_df = conn.execute(sql_query).fetchdf()
+
+# Close DuckDB connection
+conn.close()
+
+# -- DEBUG --
+# Display result_df
+st.dataframe(result_df)
 
 # Generate unique federal states for selection
 federal_states = df['region'].unique()
