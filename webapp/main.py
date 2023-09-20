@@ -9,7 +9,9 @@ import duckdb
 st.set_page_config(layout="wide")
 
 # URL constants
-DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
+STATE_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
+DISTRICT_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.88"
+
 GEOJSON_URL = 'https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json'
 
 # Initialize session states
@@ -87,7 +89,7 @@ def create_map(df):
 
 
 # Fetch and preprocess data (dataframe)
-raw_json = fetch_data(DATA_URL)
+raw_json = fetch_data(STATE_DATA_URL)
 if raw_json:
     df = preprocess_data(raw_json)
     update_df_categories(df)
@@ -95,7 +97,7 @@ else:
     st.error("Failed to fetch data")
 
 # Connect to temp DuckDB database
-conn = duckdb.connect(database='memory', read_only=False)
+conn = duckdb.connect(database=':memory:', read_only=False)
 
 # Check if table exists. If not, create table
 tables = conn.execute("SHOW TABLES").fetchall()
