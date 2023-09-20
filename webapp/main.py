@@ -106,6 +106,8 @@ if('data',) not in tables:
 # Create SQL query
 sql_query = f"""
 SELECT * FROM data
+WHERE building_type = '{st.session_state.selected_building_type}'
+AND heat_source = '{st.session_state.selected_heat_source}'
 """
 
 # Execute SQL query and save result set into dataframe
