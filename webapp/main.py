@@ -69,7 +69,7 @@ def update_df_categories(df):
 
 # Create and display map with choropleth layer using Plotly
 def create_map(df):
-    fig = px.choropleth_mapbox(df.query("building_type == 'Total' & heat_source == 'Total'"), 
+    fig = px.choropleth_mapbox(df.query(f"building_type == '{st.session_state.selected_building_type}' & heat_source == '{st.session_state.selected_heat_source}'"), 
                                geojson=GEOJSON_URL, 
                                locations='region', 
                                color='value',
@@ -86,7 +86,6 @@ def create_map(df):
         height=800
     )
     st.plotly_chart(fig, use_container_width=True)
-
 
 # Fetch and preprocess data (dataframe)
 raw_json = fetch_data(STATE_DATA_URL)
