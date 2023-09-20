@@ -11,6 +11,16 @@ st.set_page_config(layout="wide")
 DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
 GEOJSON_URL = 'https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json'
 
+# Initialize session states
+if 'selected_state' not in st.session_state:
+    st.session_state.selected_state = "(Deutschland)"
+
+if 'selected_building_type' not in st.session_state:
+    st.session_state.selected_building_type = "Total"
+
+if 'selected_heat_source' not in st.session_state:
+    st.session_state.selected_heat_source = "Total"
+
 # Fetch data from API
 def fetch_data(url):
     response = requests.get(url)
