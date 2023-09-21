@@ -12,7 +12,9 @@ st.set_page_config(layout="wide")
 STATE_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
 DISTRICT_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.88"
 
-GEOJSON_URL = 'https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json'
+STATE_GEOJSON_URL = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json"
+DISTRICT_GEOJSON_URL = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/4_kreise/2_hoch.geo.json"
+
 
 # Initialize session states
 if 'selected_state' not in st.session_state:
@@ -23,6 +25,14 @@ if 'selected_building_type' not in st.session_state:
 
 if 'selected_heat_source' not in st.session_state:
     st.session_state.selected_heat_source = "Total"
+
+# Choose URLs dependent on selection
+if st.session_state.selected_state == "(Deutschland)":
+    GEOJSON_URL = STATE_GEOJSON_URL
+    DATA_URL = STATE_DATA_URL
+else:
+    GEOJSON_URL = DISTRICT_GEOJSON_URL
+    DATA_URL = DISTRICT_DATA_URL
 
 # -- Display session_state
 st.write(st.session_state)
@@ -68,7 +78,7 @@ def update_df_categories(df):
     df['heat_source'].replace(heat_source_dict, inplace=True)
 
 # Create and display map with choropleth layer using Plotly
-def create_map(df):
+def create_map(result_df):
     fig = px.choropleth_mapbox(df.query(f"building_type == '{st.session_state.selected_building_type}' & heat_source == '{st.session_state.selected_heat_source}'"), 
                                geojson=GEOJSON_URL, 
                                locations='region', 
@@ -88,7 +98,7 @@ def create_map(df):
     st.plotly_chart(fig, use_container_width=True)
 
 # Fetch and preprocess data (dataframe)
-raw_json = fetch_data(STATE_DATA_URL)
+raw_json = fetch_data(DATA_URL)
 if raw_json:
     df = preprocess_data(raw_json)
     update_df_categories(df)
@@ -156,7 +166,7 @@ with col_heat:
 
 # Display map
 with col_map:
-    create_map(df)
+    create_map(result_df)
 
 # Display statistics
 with col_stats:
