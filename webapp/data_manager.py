@@ -44,6 +44,7 @@ def get_result_df(selected_building_type, selected_heat_source):
     WHERE building_type = '{selected_building_type}'
     AND heat_source = '{selected_heat_source}'
     """
+    
     # Fetch DataFrame
     result_df = conn.execute(sql_query).fetchdf()
 
