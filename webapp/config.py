@@ -40,3 +40,20 @@ STATE_GEO_VALUES = {
     "Thüringen": (51.0110, 10.8453, 8),
     "(Deutschland)": (51.1657, 10.4515, 5)
 }
+
+BUILDING_TYPE_MAPPING = {
+        1: 'One- and Two-family Houses',
+        6: 'Apartment Buildings (3-6)',
+        9: 'Row Houses',
+        11: 'Semi-detached Houses',
+        38: 'Apartment Buildings: 7 and More Apartments',
+        100: 'Total'
+    }
+
+HEAT_SOURCE_MAPPING = {
+        0: 'Total',
+        1: 'Air',
+        2: 'Ground Probe',
+        3: 'Ground Collector',
+        4: 'Solar-Thermal Energy and Ice Storage'
+    }

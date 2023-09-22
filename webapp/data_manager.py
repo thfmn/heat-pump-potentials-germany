@@ -2,8 +2,7 @@ import requests
 import pandas as pd
 import duckdb
 import json
-from config import STATE_DATA_URL, DISTRICT_DATA_URL
-
+from config import STATE_DATA_URL, DISTRICT_DATA_URL, BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING
 
 # Fetch data from API
 def fetch_data(url):
@@ -26,23 +25,8 @@ def preprocess_data(raw_json):
 
 # Update data frame with human-readable categories
 def update_df_categories(df):
-    building_type_dict = {
-        1: 'One- and Two-family Houses',
-        6: 'Apartment Buildings (3-6)',
-        9: 'Row Houses',
-        11: 'Semi-detached Houses',
-        38: 'Apartment Buildings: 7 and More Apartments',
-        100: 'Total'
-    }
-    heat_source_dict = {
-        0: 'Total',
-        1: 'Air',
-        2: 'Ground Probe',
-        3: 'Ground Collector',
-        4: 'Solar-Thermal Energy and Ice Storage'
-    }
-    df['building_type'].replace(building_type_dict, inplace=True)
-    df['heat_source'].replace(heat_source_dict, inplace=True)
+    df['building_type'].replace(BUILDING_TYPE_MAPPING, inplace=True)
+    df['heat_source'].replace(HEAT_SOURCE_MAPPING, inplace=True)
 
 # Query data based upon user selections
 def get_result_df(selected_building_type, selected_heat_source):
@@ -54,13 +38,17 @@ def get_result_df(selected_building_type, selected_heat_source):
     if('data',) not in tables:
         conn.execute("CREATE TABLE data AS SELECT * FROM df")
 
-
+    # Create query
     sql_query = f"""
     SELECT * FROM data
     WHERE building_type = '{selected_building_type}'
     AND heat_source = '{selected_heat_source}'
     """
+    # Fetch DataFrame
     result_df = conn.execute(sql_query).fetchdf()
+
+    # Close DuckDB connection
     conn.close()
+
     return result_df
 
