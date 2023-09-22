@@ -64,7 +64,6 @@ def main():
         lat, lon, zoom = set_geographical_values(selected_state)
         
 
-
     # Building type selection
     with col_building:
         selected_building = st.selectbox("Select building type", 
