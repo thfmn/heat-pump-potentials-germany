@@ -2,7 +2,6 @@ import streamlit as st
 from config import FEDERAL_STATES, STATE_GEOJSON_URL, DISTRICT_GEOJSON_URL, STATE_DATA_URL, DISTRICT_DATA_URL
 from data_manager import fetch_data, preprocess_data, update_df_categories, get_result_df
 from map_manager import create_map, set_geographical_values
-import duckdb
 
 # Set the layout configuration of the Streamlit app
 st.set_page_config(layout="wide")
