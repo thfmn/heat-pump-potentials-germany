@@ -1,4 +1,3 @@
-import streamlit as st
 import plotly.express as px
 from config import STATE_GEOJSON_URL, DISTRICT_GEOJSON_URL, STATE_GEO_VALUES
 
@@ -26,4 +25,5 @@ def create_map(result_df, selected_state, selected_building_type, selected_heat_
         width=800, 
         height=800
     )
-    st.plotly_chart(fig, use_container_width=True)
+
+    return fig

@@ -20,7 +20,6 @@ if 'selected_heat_source' not in st.session_state:
 
 def main():
 
-
     # ------------- DEBUG---------------
     st.write(st.session_state)
     # ------------- /DEBUG---------------
@@ -82,7 +81,8 @@ def main():
 
     # Display map
     with col_map:
-        create_map(result_df, selected_state, selected_building_type, selected_heat_source, GEOJSON_URL)
+        fig = create_map(result_df, selected_state, selected_building_type, selected_heat_source, GEOJSON_URL)
+        st.plotly_chart(fig, use_container_width=True)
 
     # Display statistics
     with col_stats:
