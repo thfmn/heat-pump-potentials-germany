@@ -14,16 +14,22 @@ def create_map(result_df, selected_state, selected_building_type, selected_heat_
                                locations='region', 
                                color='value',
                                featureidkey="properties.name",
-                               color_continuous_scale="RdYlGn",
+                               color_continuous_scale='RdYlGn',
+                               range_color=[0,1],
                                mapbox_style="carto-darkmatter",
-                               opacity=0.7)
+                               opacity=1,
+                               hover_data={'value': True},
+                               hover_name=result_df['region'],
+                               )
+    fig.update_traces(hovertemplate='%{hovertext}<br>%{z:.1%}')
     fig.update_geos(fitbounds="locations")
     fig.update_layout(
         mapbox_zoom=zoom,
         mapbox_center={"lat": lat, "lon": lon},
         autosize=False,
         width=800, 
-        height=800
+        height=800,
+        coloraxis_showscale=False
     )
 
     return fig
