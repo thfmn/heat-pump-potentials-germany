@@ -1,8 +1,11 @@
 STATE_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
 DISTRICT_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.88"
+DISTRICT_DATA = "data/district_level/nrw_data.csv"
 
 STATE_GEOJSON_URL = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json"
-DISTRICT_GEOJSON_URL = "data/georef-germany-kreis@public.geojson"
+# DISTRICT_GEOJSON_URL = "data/georef-germany-kreis@public.geojson"
+# DISTRICT_GEOJSON_URL = "data/geodata/nrw_geo.geojson"
+DISTRICT_GEOJSON_URL = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/4_kreise/2_hoch.geo.json"
 
 FEDERAL_STATES = [
     'Baden-Württemberg',
@@ -31,7 +34,7 @@ STATE_GEO_VALUES = {
     "Hessen": (50.6521, 9.1624, 8),
     "Mecklenburg-Vorpommern": (53.6127, 12.4296, 8),
     "Niedersachsen": (52.6367, 9.8451, 8),
-    "Nordrhein-Westfalen": (51.4332, 7.6616, 8),
+    "Nordrhein-Westfalen": (51.4332, 7.6616, 7),
     "Rheinland-Pfalz": (50.1183, 7.3090, 8),
     "Saarland": (49.3964, 7.0230, 8),
     "Sachsen": (51.1045, 13.2017, 8),
