@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
 from config import FEDERAL_STATES, STATE_GEOJSON_URL, DISTRICT_GEOJSON_URL, STATE_DATA_URL, DISTRICT_DATA_URL, DISTRICT_DATA
-from data_manager import fetch_data, preprocess_data_germany, update_df_categories, get_result_df
-from map_manager import create_map, set_geographical_values
+from data_manager import fetch_data, preprocess_data_germany, update_df_categories, get_result_df, process_geojson, process_result_df
+from map_manager import create_germany_map, create_state_map, set_geographical_values
 
 # Set the layout configuration of the Streamlit app
 st.set_page_config(layout="wide")
@@ -38,6 +38,7 @@ def main():
     
 
     result_df = get_result_df(selected_state, selected_building_type, selected_heat_source)
+    result_df = process_result_df(result_df)
 
     # ------------- DEBUG---------------
     st.dataframe(result_df)
@@ -83,13 +84,18 @@ def main():
 
     # Display map
     with col_map:
-        fig = create_map(result_df, selected_state, selected_building_type, selected_heat_source, GEOJSON_URL)
+        if selected_state == '(Deutschland)':
+            fig = create_germany_map(result_df, selected_building_type, selected_heat_source, GEOJSON_URL)
+        else:
+            district_geojson = process_geojson(selected_state, GEOJSON_URL)
+            fig = create_state_map(result_df, selected_state, selected_building_type, selected_heat_source, district_geojson)
+
         st.plotly_chart(fig, use_container_width=True)
 
     # Display statistics
     with col_stats:
         st.subheader("Stats")
-        st.bar_chart({'Data': [1, 2, 3, 7, 5]}) # Dummy stats for now
+        #st.bar_chart({'Data': [1, 2, 3, 7, 5]}) # Dummy stats for now
 
 if __name__ == "__main__":
     main()

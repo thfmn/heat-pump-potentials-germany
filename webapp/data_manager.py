@@ -2,7 +2,8 @@ import requests
 import pandas as pd
 import duckdb
 import json
-from config import STATE_DATA_URL, DISTRICT_DATA, BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING
+import streamlit as st
+from config import STATE_DATA_URL, DISTRICT_DATA, BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING, DISTRICT_GEOJSON_URL
 
 # Fetch data from API
 def fetch_data(url):
@@ -70,4 +71,13 @@ def get_result_df(selected_state, selected_building_type, selected_heat_source):
     conn.close()
 
     return result_df
+
+def process_result_df(result_df):
+    return result_df
+
+def process_geojson(selected_state, DISTRICT_GEOJSON_URL):
+    if selected_state == 'Baden-Württemberg':
+        pass
+    else:
+        pass
 

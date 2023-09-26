@@ -1,6 +1,6 @@
 STATE_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
 DISTRICT_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.88"
-DISTRICT_DATA = "webapp/data/district_level/nrw_data.csv"
+DISTRICT_DATA = "data/district_level/nrw_data.csv"
 
 STATE_GEOJSON_URL = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json"
 # DISTRICT_GEOJSON_URL = "data/georef-germany-kreis@public.geojson"
