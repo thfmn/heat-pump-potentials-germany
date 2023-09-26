@@ -1,4 +1,3 @@
-data/
 webapp/test.py
 webapp/memory
 webapp/memory.wal
