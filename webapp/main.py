@@ -1,6 +1,7 @@
 import streamlit as st
-from config import FEDERAL_STATES, STATE_GEOJSON_URL, DISTRICT_GEOJSON_URL, STATE_DATA_URL, DISTRICT_DATA_URL
-from data_manager import fetch_data, preprocess_data, update_df_categories, get_result_df
+import pandas as pd
+from config import FEDERAL_STATES, STATE_GEOJSON_URL, DISTRICT_GEOJSON_URL, STATE_DATA_URL, DISTRICT_DATA_URL, DISTRICT_DATA
+from data_manager import fetch_data, preprocess_data_germany, update_df_categories, get_result_df
 from map_manager import create_map, set_geographical_values
 
 # Set the layout configuration of the Streamlit app
@@ -30,12 +31,13 @@ def main():
 
     if st.session_state.selected_state == "(Deutschland)":
         raw_json = fetch_data(STATE_DATA_URL)
+        df = preprocess_data_germany(raw_json)
+        update_df_categories(df)
     else:
-        raw_json = fetch_data(DISTRICT_DATA_URL)
-    df = preprocess_data(raw_json)
-    update_df_categories(df)
+        df = pd.read_csv(DISTRICT_DATA)
+    
 
-    result_df = get_result_df(selected_building_type, selected_heat_source)
+    result_df = get_result_df(selected_state, selected_building_type, selected_heat_source)
 
     # ------------- DEBUG---------------
     st.dataframe(result_df)
@@ -61,6 +63,7 @@ def main():
         else:
             GEOJSON_URL = DISTRICT_GEOJSON_URL
 
+        # Set zoom
         lat, lon, zoom = set_geographical_values(selected_state)
         
 
