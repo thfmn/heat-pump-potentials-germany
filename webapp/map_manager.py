@@ -12,7 +12,6 @@ def set_geographical_values(selected_state):
 # Create and display map with choropleth layer
 def create_germany_map(result_df, selected_building_type, selected_heat_source, GEOJSON_URL):
     lat, lon, zoom = 51.1657, 10.4515, 5
-
     
     fig = px.choropleth_mapbox(result_df.query(f"building_type == '{selected_building_type}' & heat_source == '{selected_heat_source}'"), 
                             geojson=GEOJSON_URL, 
@@ -52,7 +51,12 @@ def create_state_map(result_df, selected_state, selected_building_type, selected
 
     # Build a mapping dictionary using regex to match district names
     districts = set(result_df['district'])
+
+    # ----- DEBUG ----
     st.write(districts)
+     # ----- DEBUG ----
+
+
     # Replace the features in GeoJSON data with the filtered ones
     geojson_data['features'] = filtered_features
 
@@ -78,5 +82,9 @@ def create_state_map(result_df, selected_state, selected_building_type, selected
         height=800,
         coloraxis_showscale=False
     )
+
+    # ----- DEBUG ----
+    st.write(filtered_features)
+    # ----- DEBUG ----
     return fig
     
