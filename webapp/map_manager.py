@@ -3,7 +3,8 @@ import streamlit as st
 import json
 import requests
 import re
-from config import STATE_GEOJSON_URL, STATE_GEO_VALUES, DISTRICT_GEOJSON_URL
+from shapely.geometry import mapping, shape, Polygon
+from config import STATE_GEO_VALUES
 
 # Set longitude and latitude (center) and zoom for each state selection
 def set_geographical_values(selected_state):
@@ -33,45 +34,51 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
         autosize=False,
         width=800, 
         height=800,
-        coloraxis_showscale=False
+        coloraxis_colorbar=dict(
+        title="Anteil in %",
+        tickvals=[0, 0.25, 0.5, 0.75, 1],
+        ticktext=['0%', '25%', '50%', '75%', '100%'],
+        x=0.5,  # Centers the colorbar horizontally
+        y=0,  # Positions the colorbar above the plot
+        xanchor='center',  # Ensures the colorbar is centered at the x position
+        orientation='h',  # Makes the colorbar horizontal
+        len=0.7  # Adjusts the length of the colorbar
+        )
     )
 
     return fig
 
-def create_state_map(result_df, selected_state, selected_building_type, selected_heat_source, GEOJSON_URL):
-    lat, lon, zoom = set_geographical_values(selected_state)  # pass the selected_state
-    # Fetch GeoJSON and load it into a dictionary
-    geojson_data = requests.get(DISTRICT_GEOJSON_URL).json()
-
-    # Filter features based on the selected state
-    filtered_features = [
-    feature for feature in geojson_data['features']
-    if feature['properties']['NAME_1'] == selected_state
+    
+def create_state_map(state_df, selected_state, selected_building_type, selected_heat_source):
+    lat, lon, zoom = set_geographical_values(selected_state)
+    
+    filtered_df = state_df.query(f"building_type == '{selected_building_type}' & heat_source == '{selected_heat_source}' & federal_state == '{selected_state}'")
+    
+    geojson = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {"district": row.district, "district_type": row.district_type},
+            "geometry": mapping(row.geometry)
+        }
+        for idx, row in filtered_df.iterrows()
     ]
-
-    # Build a mapping dictionary using regex to match district names
-    districts = set(result_df['district'])
-
-    # ----- DEBUG ----
-    st.write(districts)
-     # ----- DEBUG ----
-
-
-    # Replace the features in GeoJSON data with the filtered ones
-    geojson_data['features'] = filtered_features
-
-    fig = px.choropleth_mapbox(result_df.query(f"building_type == '{selected_building_type}' & heat_source == '{selected_heat_source}' & federal_state == '{selected_state}'"), 
-                            geojson=geojson_data, 
-                            locations='district', 
+    }
+    
+    fig = px.choropleth_mapbox(filtered_df, 
+                            geojson=geojson, 
+                            locations='district',
+                            featureidkey="properties.district",
                             color='value',
-                            featureidkey="properties.NAME_3",
                             color_continuous_scale='RdYlGn',
-                            range_color=[0,1],
+                            range_color=[0, 1],
                             mapbox_style="carto-darkmatter",
                             opacity=1,
-                            hover_data={'value': True},
-                            hover_name=result_df['district'],
-                            )
+                            hover_name=filtered_df['district'],
+                            hover_data={'value': True} 
+                           )
+
     fig.update_traces(hovertemplate='%{hovertext}<br>%{z:.1%}')
     fig.update_geos(fitbounds="locations")
     fig.update_layout(
@@ -80,11 +87,17 @@ def create_state_map(result_df, selected_state, selected_building_type, selected
         autosize=False,
         width=800, 
         height=800,
-        coloraxis_showscale=False
+        coloraxis_colorbar=dict(
+        title="Anteil in %",
+        tickvals=[0, 0.25, 0.5, 0.75, 1],
+        ticktext=['0%', '25%', '50%', '75%', '100%'],
+        x=0.5,  # Centers the colorbar horizontally
+        y=0,  # Positions the colorbar above the plot
+        xanchor='center',  # Ensures the colorbar is centered at the x position
+        orientation='h',  # Makes the colorbar horizontal
+        len=0.7 # Adjusts the length of the colorbar
+        )
     )
 
-    # ----- DEBUG ----
-    st.write(filtered_features)
-    # ----- DEBUG ----
     return fig
     
