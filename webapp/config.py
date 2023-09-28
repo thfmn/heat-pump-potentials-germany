@@ -26,16 +26,16 @@ FEDERAL_STATES = [
 ]
 
 STATE_GEO_VALUES = {
-    "Baden-Württemberg": (48.6616, 9.3501, 8),
-    "Bayern": (48.7904, 11.4979, 8),
-    "Brandenburg": (52.4125, 12.5316, 8),
+    "Baden-Württemberg": (48.7, 9.1, 6.9),
+    "Bayern": (48.99, 11.45, 6.4),
+    "Brandenburg": (52.45, 13.1, 6.8),
     "Bremen": (53.0793, 8.8017, 8),  # adjust for Bremerhaven
-    "Hamburg": (53.5488, 9.9872, 8),
-    "Hessen": (50.6521, 9.1624, 8),
+    "Hamburg": (53.55, 10, 9),
+    "Hessen": (50.6521, 9.1624, 6.7),
     "Mecklenburg-Vorpommern": (53.6127, 12.4296, 8),
     "Niedersachsen": (52.6367, 9.8451, 8),
-    "Nordrhein-Westfalen": (51.4332, 7.6616, 7),
-    "Rheinland-Pfalz": (50.1183, 7.3090, 8),
+    "Nordrhein-Westfalen": (51.4332, 7.6616, 6.8),
+    "Rheinland-Pfalz": (49.95, 7.3, 7.15),
     "Saarland": (49.3964, 7.0230, 8),
     "Sachsen": (51.1045, 13.2017, 8),
     "Sachsen-Anhalt": (51.9503, 11.6923, 8),
