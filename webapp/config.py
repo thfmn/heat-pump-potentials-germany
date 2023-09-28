@@ -1,10 +1,8 @@
 STATE_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
 DISTRICT_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.88"
-DISTRICT_DATA = "webapp/data/district_level/nrw_data.csv"
+ 
 
 STATE_GEOJSON_URL = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json"
-# DISTRICT_GEOJSON_URL = "data/georef-germany-kreis@public.geojson"
-# DISTRICT_GEOJSON_URL = "data/geodata/nrw_geo.geojson"
 DISTRICT_GEOJSON_URL = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/4_kreise/2_hoch.geo.json"
 
 FEDERAL_STATES = [
@@ -25,18 +23,36 @@ FEDERAL_STATES = [
     'Thüringen'
 ]
 
+DISTRICT_DATA_SELECTION = {
+    'Baden-Württemberg': 'bw_full_data.csv',
+    'Bayern': 'by_full_data.csv',
+    'Brandenburg': 'bb_full_data.csv',
+    'Bremen': 'hb_full_data.csv',
+    'Hamburg': 'hh_full_data.csv',
+    'Hessen': 'he_full_data.csv',
+    'Mecklenburg-Vorpommern': 'mv_full_data.csv',
+    'Niedersachsen': 'ni_full_data.csv',
+    'Nordrhein-Westfalen': 'nw_full_data.csv',
+    'Rheinland-Pfalz': 'rp_full_data.csv',
+    'Saarland': 'sl_full_data.csv',
+    'Sachsen': 'sn_full_data.csv',
+    'Sachsen-Anhalt': 'st_full_data.csv',
+    'Schleswig-Holstein': 'sh_full_data.csv',
+    'Thüringen': 'th_full_data.csv'
+}
+
 STATE_GEO_VALUES = {
-    "Baden-Württemberg": (48.7, 9.1, 6.9),
-    "Bayern": (48.99, 11.45, 6.4),
-    "Brandenburg": (52.45, 13.1, 6.8),
-    "Bremen": (53.0793, 8.8017, 8),  # adjust for Bremerhaven
+    "Baden-Württemberg": (48.55, 9.1, 6.8),
+    "Bayern": (48.8, 11.45, 6.3),
+    "Brandenburg": (52.35, 13.1, 6.8),
+    "Bremen": (53.0, 8.80, 8),  # adjust for Bremerhaven
     "Hamburg": (53.55, 10, 9),
-    "Hessen": (50.6521, 9.1624, 6.7),
-    "Mecklenburg-Vorpommern": (53.6127, 12.4296, 8),
-    "Niedersachsen": (52.6367, 9.8451, 8),
-    "Nordrhein-Westfalen": (51.4332, 7.6616, 6.8),
-    "Rheinland-Pfalz": (49.95, 7.3, 7.15),
-    "Saarland": (49.3964, 7.0230, 8),
+    "Hessen": (50.44, 9.16, 6.8),
+    "Mecklenburg-Vorpommern": (53.61, 12.43, 8),
+    "Niedersachsen": (52.64, 9.85, 8),
+    "Nordrhein-Westfalen": (51.35, 7.66, 6.8),
+    "Rheinland-Pfalz": (49.85, 7.3, 7),
+    "Saarland": (49.35, 6.9, 8.5),
     "Sachsen": (51.1045, 13.2017, 8),
     "Sachsen-Anhalt": (51.9503, 11.6923, 8),
     "Schleswig-Holstein": (54.5250, 9.5608, 8),
