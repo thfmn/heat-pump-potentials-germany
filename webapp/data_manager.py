@@ -3,7 +3,7 @@ import pandas as pd
 import duckdb
 import json
 import streamlit as st
-from config import STATE_DATA_URL, DISTRICT_DATA, BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING, DISTRICT_GEOJSON_URL
+from config import BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING
 
 # Fetch data from API
 def fetch_data(url):
@@ -23,16 +23,6 @@ def preprocess_data_germany(raw_json):
     df['region'].replace(dict(zip(df['id_region'], df['region'])), inplace=True)
     df.drop(['id_region'], axis=1, inplace=True)
     return df
-
-# def preprocess_data_state(raw_csv):
-#     data = raw_json[0]["data"]
-#     df = pd.DataFrame(data).dropna(axis=1, how='all')
-#     drop_cols = ['id_opendata', 'id_region_type', 'region_type', 'year', 'internal_id']
-#     df.drop(drop_cols, axis=1, inplace=True)
-#     df.rename(columns={'internal_id_1': 'building_type', 'internal_id_2': 'heat_source'}, inplace=True)
-#     df['region'].replace(dict(zip(df['id_region'], df['region'])), inplace=True)
-#     df.drop(['id_region'], axis=1, inplace=True)
-#     return df
 
 # Update data frame with human-readable categories
 def update_df_categories(df):
@@ -71,13 +61,3 @@ def get_result_df(selected_state, selected_building_type, selected_heat_source):
     conn.close()
 
     return result_df
-
-def process_result_df(result_df):
-    return result_df
-
-def process_geojson(selected_state, DISTRICT_GEOJSON_URL):
-    if selected_state == 'Baden-Württemberg':
-        pass
-    else:
-        pass
-
