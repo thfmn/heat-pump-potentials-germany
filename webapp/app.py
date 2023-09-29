@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import geopandas as gpd
+import os
 from data_manager import fetch_data, preprocess_data_germany, update_df_categories, get_result_df
 from map_manager import create_germany_map, create_state_map, set_geographical_values
 from shapely import wkt
@@ -40,8 +41,13 @@ def main():
         update_df_categories(df)
         result_df = get_result_df(selected_state, selected_building_type, selected_heat_source)
     else:
-        # Choose correct local data depending on state_selection from data/districts
-        df = pd.read_csv(f"data/districts/{DISTRICT_DATA_SELECTION.get(selected_state)}")
+        # Get the absolute path of the directory where app.py is located
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        # Construct the absolute path to the data file
+        data_path = os.path.join(dir_path, f"data/districts/{DISTRICT_DATA_SELECTION.get(selected_state)}")
+
+        # Choose and process correct local data depending on state_selection from data/districts
+        df = pd.read_csv(data_path)
         update_df_categories(df)
         df['geometry'] = df['geometry'].apply(wkt.loads)
         gdf = gpd.GeoDataFrame(df, geometry='geometry')
