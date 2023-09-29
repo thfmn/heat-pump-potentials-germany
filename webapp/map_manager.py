@@ -1,9 +1,5 @@
 import plotly.express as px
-import streamlit as st
-import json
-import requests
-import re
-from shapely.geometry import mapping, shape, Polygon
+from shapely.geometry import mapping
 from config import STATE_GEO_VALUES
 
 # Set longitude and latitude (center) and zoom for each state selection
@@ -38,11 +34,11 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
         title="Anteil in %",
         tickvals=[0, 0.25, 0.5, 0.75, 1],
         ticktext=['0%', '25%', '50%', '75%', '100%'],
-        x=0.5,  # Centers the colorbar horizontally
-        y=0,  # Positions the colorbar above the plot
-        xanchor='center',  # Ensures the colorbar is centered at the x position
-        orientation='h',  # Makes the colorbar horizontal
-        len=0.7  # Adjusts the length of the colorbar
+        x=0.5,
+        y=0,
+        xanchor='center',
+        orientation='h',
+        len=0.7
         )
     )
 
@@ -91,11 +87,11 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
         title="Anteil in %",
         tickvals=[0, 0.25, 0.5, 0.75, 1],
         ticktext=['0%', '25%', '50%', '75%', '100%'],
-        x=0.5,  # Centers the colorbar horizontally
-        y=0,  # Positions the colorbar above the plot
-        xanchor='center',  # Ensures the colorbar is centered at the x position
-        orientation='h',  # Makes the colorbar horizontal
-        len=0.7 # Adjusts the length of the colorbar
+        x=0.5,
+        y=0,
+        xanchor='center',
+        orientation='h',
+        len=0.7
         )
     )
 
