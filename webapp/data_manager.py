@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 import duckdb
 import json
-import streamlit as st
 from config import BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING
 
 # Fetch data from API

@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 import geopandas as gpd
-from config import FEDERAL_STATES, STATE_GEOJSON_URL, DISTRICT_GEOJSON_URL, STATE_DATA_URL, DISTRICT_DATA_SELECTION
 from data_manager import fetch_data, preprocess_data_germany, update_df_categories, get_result_df
 from map_manager import create_germany_map, create_state_map, set_geographical_values
 from shapely import wkt
+from config import FEDERAL_STATES, STATE_GEOJSON_URL, DISTRICT_GEOJSON_URL, STATE_DATA_URL, DISTRICT_DATA_SELECTION
 
 # Set the layout configuration of the Streamlit app
 st.set_page_config(layout="wide")
@@ -13,7 +13,6 @@ st.set_page_config(layout="wide")
 pd.set_option('io.parquet.engine', 'pyarrow')
 
 # Initialize session states
-
 if 'selected_state' not in st.session_state:
     st.session_state.selected_state = "(Deutschland)"
 
@@ -35,20 +34,18 @@ def main():
     selected_heat_source = st.session_state.selected_heat_source
 
     if st.session_state.selected_state == "(Deutschland)":
+        # API call for full country scope
         raw_json = fetch_data(STATE_DATA_URL)
         df = preprocess_data_germany(raw_json)
         update_df_categories(df)
         result_df = get_result_df(selected_state, selected_building_type, selected_heat_source)
     else:
-        # Choose correct data depending on state_selection from data/districts
+        # Choose correct local data depending on state_selection from data/districts
         df = pd.read_csv(f"data/districts/{DISTRICT_DATA_SELECTION.get(selected_state)}")
         update_df_categories(df)
         df['geometry'] = df['geometry'].apply(wkt.loads)
         gdf = gpd.GeoDataFrame(df, geometry='geometry')
         result_df = gdf
-        # st.dataframe(df)
-
-    
 
     # ------------- DEBUG---------------
     #st.dataframe(result_df)
@@ -62,6 +59,7 @@ def main():
     col_state, col_building, col_heat = st.columns(3)
     col_map, col_stats = st.columns([0.7, 0.3])
 
+    # -- Populate columns --
     # State selection
     with col_state:
         selected_state = st.selectbox("Select federal state", 
@@ -77,7 +75,6 @@ def main():
         # Set zoom
         lat, lon, zoom = set_geographical_values(selected_state)
         
-
     # Building type selection
     with col_building:
         selected_building = st.selectbox("Select building type", 
@@ -108,4 +105,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
