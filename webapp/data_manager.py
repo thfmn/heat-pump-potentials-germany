@@ -36,17 +36,18 @@ def get_result_df(selected_state, selected_building_type, selected_heat_source):
     # Check if table exists. If not, create table
     tables = conn.execute("SHOW TABLES").fetchall()
     if('data',) not in tables:
-        conn.execute("CREATE TABLE data AS SELECT * FROM df")
+        create_table_query = "CREATE TABLE data AS SELECT * FROM df"
+        conn.execute(create_table_query)
 
     if selected_state == "(Deutschland)":
         # Create query
-        sql_query = f"""
+        select_data_query = f"""
         SELECT * FROM data
         WHERE building_type = '{selected_building_type}'
         AND heat_source = '{selected_heat_source}'
         """
     else:
-        sql_query = f"""
+        select_data_query = f"""
         SELECT * FROM data
         WHERE building_type = '{selected_building_type}'
         AND heat_source = '{selected_heat_source}'
@@ -54,7 +55,7 @@ def get_result_df(selected_state, selected_building_type, selected_heat_source):
         """
     
     # Fetch DataFrame
-    result_df = conn.execute(sql_query).fetchdf()
+    result_df = conn.execute(select_data_query).fetchdf()
 
     # Close DuckDB connection
     conn.close()
