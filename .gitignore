@@ -1,9 +1,5 @@
 webapp/__pycache__
-webapp/test.py
 webapp/memory
 webapp/memory.wal
-webapp/queries.sql
-data/all_districts.csv
 data/district_matches.ipynb
-duckdbtest.py
 
