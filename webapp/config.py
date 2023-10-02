@@ -55,7 +55,7 @@ STATE_GEO_VALUES = {
     "Saarland": (49.3964, 6.9, 8.3),
     "Sachsen": (51.1045, 13.2017, 8),
     "Sachsen-Anhalt": (51.9503, 11.6923, 8),
-    "Schleswig-Holstein": (54.15, 9.8, 6.0),
+    "Schleswig-Holstein": (54.15, 9.8, 7.0),
     "Thüringen": (51.0110, 10.8453, 8),
     "(Deutschland)": (51.1657, 10.4515, 5)
 }
