@@ -42,8 +42,8 @@ DISTRICT_DATA_SELECTION = {
 }
 
 STATE_GEO_VALUES = {
-    "Baden-Württemberg": (48.7, 9.1, 6.9),
-    "Bayern": (48.99, 11.45, 6.4),
+    "Baden-Württemberg": (48.6, 9.1, 6.85),
+    "Bayern": (48.90, 11.45, 6.3),
     "Brandenburg": (52.45, 13.1, 6.8),
     "Bremen": (53.0793, 8.8017, 8),  # adjust for Bremerhaven
     "Hamburg": (53.55, 10, 9),
@@ -51,12 +51,12 @@ STATE_GEO_VALUES = {
     "Mecklenburg-Vorpommern": (53.6127, 12.4296, 8),
     "Niedersachsen": (52.6367, 9.8451, 8),
     "Nordrhein-Westfalen": (51.4332, 7.6616, 6.8),
-    "Rheinland-Pfalz": (49.95, 7.3, 7.15),
+    "Rheinland-Pfalz": (49.8, 7.3, 7.0),
     "Saarland": (49.3964, 6.9, 8.3),
     "Sachsen": (51.1045, 13.2017, 8),
     "Sachsen-Anhalt": (51.9503, 11.6923, 8),
     "Schleswig-Holstein": (54.15, 9.8, 7.0),
-    "Thüringen": (50.8, 11.25, 7.15),
+    "Thüringen": (50.8, 11.25, 7.3),
     "(Deutschland)": (51.1657, 10.4515, 5)
 }
 
