@@ -48,7 +48,7 @@ STATE_GEO_VALUES = {
     "Bremen": (53.0793, 8.8017, 8),
     "Hamburg": (53.55, 10, 9),
     "Hessen": (50.6521, 9.1624, 6.7),
-    "Mecklenburg-Vorpommern": (53.6127, 12.4296, 8),
+    "Mecklenburg-Vorpommern": (53.6127, 12.4296, 7),
     "Niedersachsen": (52.6367, 9.8451, 8),
     "Nordrhein-Westfalen": (51.4332, 7.6616, 6.8),
     "Rheinland-Pfalz": (49.8, 7.3, 7.0),
