@@ -6,10 +6,11 @@ from config import BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING
 
 # Fetch data from API
 def fetch_data(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return json.loads(response.text)
-    else:
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException:
         return None
 
 # Data preprocessing
