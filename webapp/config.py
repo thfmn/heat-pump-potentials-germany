@@ -53,7 +53,7 @@ STATE_GEO_VALUES = {
     "Nordrhein-Westfalen": (51.4332, 7.6616, 6.8),
     "Rheinland-Pfalz": (49.8, 7.3, 7.0),
     "Saarland": (49.3964, 6.9, 8.3),
-    "Sachsen": (51.1045, 13.2017, 8),
+    "Sachsen": (50.9, 13.34, 6.9),
     "Sachsen-Anhalt": (51.9503, 11.6923, 8),
     "Schleswig-Holstein": (54.15, 9.8, 7.0),
     "Thüringen": (50.8, 11.25, 7.3),
@@ -76,3 +76,5 @@ HEAT_SOURCE_MAPPING = {
         3: 'Ground Collector',
         4: 'Solar-Thermal Energy and Ice Storage'
     }
+
+
