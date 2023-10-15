@@ -45,7 +45,7 @@ STATE_GEO_VALUES = {
     "Baden-Württemberg": (48.6, 9.1, 6.85),
     "Bayern": (48.90, 11.45, 6.3),
     "Brandenburg": (52.45, 13.1, 6.8),
-    "Bremen": (53.0793, 8.8017, 8),
+    "Bremen": (54.1, 8.8017, 6.7),
     "Hamburg": (53.55, 10, 9),
     "Hessen": (50.6521, 9.1624, 6.7),
     "Mecklenburg-Vorpommern": (53.6127, 12.4296, 7),
