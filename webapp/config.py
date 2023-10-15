@@ -44,7 +44,7 @@ DISTRICT_DATA_SELECTION = {
 STATE_GEO_VALUES = {
     "Baden-Württemberg": (48.6, 9.1, 6.85),
     "Bayern": (48.90, 11.45, 6.3),
-    "Brandenburg": (52.45, 13.1, 6.8),
+    "Brandenburg": (52.40, 13.1, 6.7),
     "Bremen": (53.3, 8.6, 8.6),
     "Hamburg": (53.55, 10, 9),
     "Hessen": (50.6521, 9.1624, 6.7),
