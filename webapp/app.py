@@ -58,8 +58,8 @@ def main():
     # ------------- /DEBUG---------------
 
     # Create Streamlit frontend
-    st.title("Heatpump Potentials in Germany")
-    st.divider()
+    #st.title("Heatpump Potentials in Germany")
+    #st.divider()
 
     # Layout columns
     col_state, col_building, col_heat = st.columns(3)
