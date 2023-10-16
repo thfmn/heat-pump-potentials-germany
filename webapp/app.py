@@ -83,14 +83,14 @@ def main():
         
     # Building type selection
     with col_building:
-        selected_building = st.selectbox("Select building type", 
+        selected_building = st.radio("Select building type", 
                                     options=df['building_type'].unique(),
                                     key="selected_building_type"
                                     )
 
     # Heat source selection
     with col_heat:
-        selected_heat = st.selectbox("Select heat source", 
+        selected_heat = st.radio("Select heat source", 
                                 options=df['heat_source'].unique(),
                                 key="selected_heat_source"
                                 )
