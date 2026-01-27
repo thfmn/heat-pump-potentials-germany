@@ -29,26 +29,33 @@ def main():
     selected_building_type = st.session_state.selected_building_type
     selected_heat_source = st.session_state.selected_heat_source
 
-    if st.session_state.selected_state == "(Deutschland)":
-        # API call for full country scope
-        with st.spinner("Loading Germany data from API..."):
-            raw_json = fetch_data(STATE_DATA_URL)
-            df = preprocess_data_germany(raw_json)
-            update_df_categories(df)
-            result_df = get_result_df(selected_state, selected_building_type, selected_heat_source)
-    else:
-        # Get the absolute path of the directory where app.py is located
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        # Construct the absolute path to the data file
-        data_path = os.path.join(dir_path, f"data/districts/{DISTRICT_DATA_SELECTION.get(selected_state)}")
+    try:
+        if st.session_state.selected_state == "(Deutschland)":
+            # API call for full country scope
+            with st.spinner("Loading Germany data from API..."):
+                raw_json = fetch_data(STATE_DATA_URL)
+                df = preprocess_data_germany(raw_json)
+                update_df_categories(df)
+                result_df = get_result_df(selected_state, selected_building_type, selected_heat_source)
+        else:
+            # Get the absolute path of the directory where app.py is located
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            # Construct the absolute path to the data file
+            data_path = os.path.join(dir_path, f"data/districts/{DISTRICT_DATA_SELECTION.get(selected_state)}")
 
-        # Choose and process correct local data depending on state_selection from data/districts
-        with st.spinner("Loading state data..."):
-            df = pd.read_csv(data_path)
-            update_df_categories(df)
-            df['geometry'] = df['geometry'].apply(wkt.loads)
-            gdf = gpd.GeoDataFrame(df, geometry='geometry')
-            result_df = gdf
+            # Choose and process correct local data depending on state_selection from data/districts
+            with st.spinner("Loading state data..."):
+                df = pd.read_csv(data_path)
+                update_df_categories(df)
+                df['geometry'] = df['geometry'].apply(wkt.loads)
+                gdf = gpd.GeoDataFrame(df, geometry='geometry')
+                result_df = gdf
+    except FileNotFoundError:
+        st.error(f"Data file not found for {selected_state}. Please check if the data files are available.")
+        return
+    except Exception as e:
+        st.error(f"Failed to load data: {str(e)}")
+        return
 
     # Layout columns
     col_state, col_building, col_heat = st.columns(3)
@@ -86,12 +93,15 @@ def main():
 
     # Display map
     with col_map:
-        if selected_state == '(Deutschland)':
-            fig = create_germany_map(result_df, selected_building_type, selected_heat_source, GEOJSON_URL)
-        else:
-            fig = create_state_map(result_df, selected_state, selected_building_type, selected_heat_source)
+        try:
+            if selected_state == '(Deutschland)':
+                fig = create_germany_map(result_df, selected_building_type, selected_heat_source, GEOJSON_URL)
+            else:
+                fig = create_state_map(result_df, selected_state, selected_building_type, selected_heat_source)
 
-        st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)
+        except Exception as e:
+            st.error(f"Failed to render map: {str(e)}")
 
     # Display statistics
     with col_stats:
