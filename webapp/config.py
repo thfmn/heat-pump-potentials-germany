@@ -76,7 +76,7 @@ STATE_GEO_VALUES = {
     "Hamburg": (53.55, 10, 9),
     "Hessen": (50.6521, 9.1624, 6.7),
     "Mecklenburg-Vorpommern": (53.8, 12.43, 7),
-    "Niedersachsen": (52.64, 9.85, 7),
+    "Niedersachsen": (52.85, 9.1, 6.5),
     "Nordrhein-Westfalen": (51.4332, 7.6616, 6.8),
     "Rheinland-Pfalz": (49.8, 7.3, 7.0),
     "Saarland": (49.3964, 6.9, 8.3),
