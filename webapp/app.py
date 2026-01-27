@@ -188,5 +188,47 @@ def main():
                 help=f"Lowest: {bottom_name}"
             )
 
+        # Top 10 / Bottom 10 tables
+        st.subheader("Top 10 Districts")
+        if not top_districts.empty:
+            st.dataframe(
+                top_districts,
+                column_config={
+                    "rank": st.column_config.NumberColumn("Rank", width="small"),
+                    "district": st.column_config.TextColumn("District", width="medium"),
+                    "federal_state": st.column_config.TextColumn("State", width="medium"),
+                    "value": st.column_config.NumberColumn(
+                        "Suitability (%)",
+                        format="%.1f%%",
+                        width="small",
+                    ),
+                },
+                hide_index=True,
+                use_container_width=True,
+            )
+        else:
+            st.info("No data available for the current selection.")
+
+        st.subheader("Bottom 10 Districts")
+        if not bottom_districts.empty:
+            st.dataframe(
+                bottom_districts,
+                column_config={
+                    "rank": st.column_config.NumberColumn("Rank", width="small"),
+                    "district": st.column_config.TextColumn("District", width="medium"),
+                    "federal_state": st.column_config.TextColumn("State", width="medium"),
+                    "value": st.column_config.NumberColumn(
+                        "Suitability (%)",
+                        format="%.1f%%",
+                        width="small",
+                    ),
+                },
+                hide_index=True,
+                use_container_width=True,
+            )
+        else:
+            st.info("No data available for the current selection.")
+
+
 if __name__ == "__main__":
     main()
