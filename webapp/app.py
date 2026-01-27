@@ -266,12 +266,14 @@ def render_explorer_tab():
                     result_df, selected_building_type, selected_heat_source, geojson_url
                 )
                 # Enable click events on Germany map for state navigation
+                # Config removes Plotly logo from modebar
                 event = st.plotly_chart(
                     fig,
                     use_container_width=True,
                     key="germany_map",
                     on_select="rerun",
                     selection_mode=["points"],
+                    config={"displaylogo": False},
                 )
                 # Handle click event - navigate to clicked state
                 if event and event.selection and event.selection.points:
@@ -289,12 +291,14 @@ def render_explorer_tab():
                 )
 
                 # Enable click events on state map for district navigation
+                # Config removes Plotly logo from modebar
                 event = st.plotly_chart(
                     fig,
                     use_container_width=True,
                     key="state_map",
                     on_select="rerun",
                     selection_mode=["points"],
+                    config={"displaylogo": False},
                 )
                 # Handle click event - navigate to clicked district
                 if event and event.selection and event.selection.points:
@@ -552,7 +556,9 @@ def render_comparison_maps(state_data, selected_states, building_type, heat_sour
                     margin=dict(l=0, r=0, t=0, b=0),
                     coloraxis_showscale=(idx == 0),  # Only show color scale on first map
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(
+                    fig, use_container_width=True, config={"displaylogo": False}
+                )
             except Exception as e:
                 st.error(f"Failed to render map for {state}: {e}")
 

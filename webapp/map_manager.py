@@ -85,10 +85,16 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
         featureidkey="properties.name",
         color_continuous_scale='Viridis',
         range_color=[0, 1],
-        mapbox_style="carto-darkmatter",
-        opacity=1,
+        mapbox_style="carto-positron",
+        opacity=0.85,
         hover_name='region',
         custom_data=['rank', 'building_type', 'heat_source']
+    )
+
+    # Add thicker gray borders for state boundaries
+    fig.update_traces(
+        marker_line_color='#4a4a4a',
+        marker_line_width=1.5
     )
 
     # Enhanced hover template with bold name, percentage, filters, and rank
@@ -189,10 +195,16 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
         color='value',
         color_continuous_scale='Viridis',
         range_color=[0, 1],
-        mapbox_style="carto-darkmatter",
-        opacity=1,
+        mapbox_style="carto-positron",
+        opacity=0.85,
         hover_name='district',
         custom_data=['rank', 'building_type', 'heat_source', 'district_type']
+    )
+
+    # Add thin gray borders for district boundaries
+    fig.update_traces(
+        marker_line_color='#808080',
+        marker_line_width=0.5
     )
 
     # Enhanced hover template with bold name, percentage, filters, and rank
