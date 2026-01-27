@@ -31,10 +31,11 @@ def main():
 
     if st.session_state.selected_state == "(Deutschland)":
         # API call for full country scope
-        raw_json = fetch_data(STATE_DATA_URL)
-        df = preprocess_data_germany(raw_json)
-        update_df_categories(df)
-        result_df = get_result_df(selected_state, selected_building_type, selected_heat_source)
+        with st.spinner("Loading Germany data from API..."):
+            raw_json = fetch_data(STATE_DATA_URL)
+            df = preprocess_data_germany(raw_json)
+            update_df_categories(df)
+            result_df = get_result_df(selected_state, selected_building_type, selected_heat_source)
     else:
         # Get the absolute path of the directory where app.py is located
         dir_path = os.path.dirname(os.path.realpath(__file__))
