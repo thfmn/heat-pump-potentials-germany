@@ -75,13 +75,19 @@ Values are stored as decimal proportions but displayed as percentages in the app
 
 #### Color Scale Mapping
 
-On the map visualization, values are mapped to a red-yellow-green color scale:
+On the map visualization, values are mapped to the **Viridis** colorblind-friendly color scale:
 
 | Color | Value Range | Meaning |
 |-------|-------------|---------|
-| Red | 0.0 - 0.33 | Low suitability |
-| Yellow | 0.33 - 0.66 | Moderate suitability |
-| Green | 0.66 - 1.0 | High suitability |
+| Dark Purple/Blue | 0.0 - 0.33 | Low suitability |
+| Teal/Green | 0.33 - 0.66 | Moderate suitability |
+| Yellow | 0.66 - 1.0 | High suitability |
+
+**Why Viridis?** The Viridis colorscale was chosen because it is:
+- **Perceptually uniform**: Equal steps in data correspond to equal perceived color changes
+- **Colorblind accessible**: Readable by users with deuteranopia, protanopia, and tritanopia
+- **Grayscale-friendly**: Maintains visual distinction when printed in black and white
+- **WCAG compliant**: Meets web accessibility guidelines for data visualization
 
 ### The `district_type` Column
 

@@ -181,7 +181,7 @@ The filtered DataFrame is rendered as an interactive choropleth map:
 
 2. **Map Construction** (`create_germany_map` / `create_state_map`):
    - Joins suitability values to geographic features
-   - Applies color scale (RdYlGn: red=low, green=high suitability)
+   - Applies Viridis colorblind-friendly color scale (purple=low, yellow=high suitability)
    - Configures hover tooltips with district/state name and percentage
 
 3. **Rendering**: Plotly figure is embedded in Streamlit UI using `st.plotly_chart()`

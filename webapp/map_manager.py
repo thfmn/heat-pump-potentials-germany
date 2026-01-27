@@ -5,9 +5,18 @@ display heat pump suitability data across Germany. It supports two map types:
 - Germany-wide maps showing state-level aggregations
 - State-level maps showing district-level detail
 
-Maps use a red-yellow-green color scale where green indicates higher
-suitability proportions. Geographic coordinates and zoom levels are
-configured per state for optimal visualization.
+Maps use the Viridis color scale, which is perceptually uniform and
+colorblind-friendly (accessible for deuteranopia, protanopia, and tritanopia).
+Purple/blue indicates lower suitability, yellow indicates higher suitability.
+Geographic coordinates and zoom levels are configured per state for optimal
+visualization.
+
+Color Scale Choice:
+    Viridis was chosen over RdYlGn (Red-Yellow-Green) because:
+    - Perceptually uniform: equal steps in data correspond to equal perceptual changes
+    - Colorblind accessible: works for all common forms of color vision deficiency
+    - Prints well in grayscale: maintains information without color
+    - WCAG compliant: meets accessibility guidelines for data visualization
 """
 import plotly.express as px
 from config import STATE_GEO_VALUES
@@ -38,8 +47,8 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
 
     Generates an interactive Plotly choropleth map displaying the proportion
     of buildings suitable for the selected heat pump type across all German
-    federal states. The map uses a red-yellow-green color scale where green
-    indicates higher suitability.
+    federal states. The map uses the Viridis colorblind-friendly color scale
+    where yellow indicates higher suitability and purple/blue indicates lower.
 
     Args:
         result_df: pandas DataFrame containing the state-level data with columns:
@@ -66,7 +75,7 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
                             locations='region',
                             color='value',
                             featureidkey="properties.name",
-                            color_continuous_scale='RdYlGn',
+                            color_continuous_scale='Viridis',
                             range_color=[0,1],
                             mapbox_style="carto-darkmatter",
                             opacity=1,
@@ -102,8 +111,8 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
     Generates an interactive Plotly choropleth map displaying the proportion
     of buildings suitable for the selected heat pump type across all districts
     (Kreise and kreisfreie Städte) within the specified German federal state.
-    The map uses a red-yellow-green color scale where green indicates higher
-    suitability.
+    The map uses the Viridis colorblind-friendly color scale where yellow
+    indicates higher suitability and purple/blue indicates lower suitability.
 
     The function dynamically creates GeoJSON features from the WKT geometry
     stored in the DataFrame, allowing district-level visualization without
@@ -152,7 +161,7 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
                             locations='district',
                             featureidkey="properties.district",
                             color='value',
-                            color_continuous_scale='RdYlGn',
+                            color_continuous_scale='Viridis',
                             range_color=[0, 1],
                             mapbox_style="carto-darkmatter",
                             opacity=1,

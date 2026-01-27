@@ -82,7 +82,7 @@ When you launch the application, you'll see an interactive map of Germany with t
 
 ### Interpreting the Map
 
-- **Color scale**: Regions are colored from red (low suitability, ~0%) to green (high suitability, ~100%)
+- **Color scale**: The Viridis colorblind-friendly scale is used - purple/blue indicates low suitability (~0%), yellow indicates high suitability (~100%)
 - **Hover information**: Move your mouse over any region to see detailed suitability percentages
 - **Values shown**: The percentage represents the proportion of buildings in that region that are suitable for the selected heat pump type
 
