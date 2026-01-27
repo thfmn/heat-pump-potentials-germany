@@ -267,7 +267,25 @@ def render_explorer_tab():
                     result_df, selected_state, selected_building_type, selected_heat_source
                 )
 
-                st.plotly_chart(fig, use_container_width=True)
+                # Enable click events on state map for district navigation
+                event = st.plotly_chart(
+                    fig,
+                    use_container_width=True,
+                    key="state_map",
+                    on_select="rerun",
+                    selection_mode=["points"],
+                )
+                # Handle click event - navigate to clicked district
+                if event and event.selection and event.selection.points:
+                    clicked_point = event.selection.points[0]
+                    # The 'location' field contains the district name
+                    clicked_district = clicked_point.get("location")
+                    if clicked_district:
+                        # Get the list of valid district names from the current data
+                        valid_districts = result_df['district'].unique().tolist()
+                        if clicked_district in valid_districts:
+                            navigate_to_district(selected_state, clicked_district)
+                            st.rerun()
         except Exception as e:
             logger.exception("Failed to render map: %s", str(e))
             st.error(f"Failed to render map: {str(e)}")
