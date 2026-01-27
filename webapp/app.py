@@ -101,6 +101,29 @@ def navigate_to_district(state_name: str, district_name: str):
     st.session_state.nav_selected_district = district_name
 
 
+@st.cache_data
+def load_all_districts():
+    """Load all district names from all state CSV files.
+
+    Returns:
+        dict: Mapping of district names to their federal state.
+    """
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    districts = {}
+
+    for state, filename in DISTRICT_DATA_SELECTION.items():
+        data_path = os.path.join(dir_path, f"data/districts/{filename}")
+        try:
+            df = pd.read_csv(data_path, usecols=['district', 'federal_state'])
+            unique_districts = df.drop_duplicates('district')
+            for _, row in unique_districts.iterrows():
+                districts[row['district']] = row['federal_state']
+        except Exception:
+            continue
+
+    return districts
+
+
 def render_breadcrumb():
     """Render breadcrumb navigation for drill-down hierarchy.
 
@@ -330,6 +353,26 @@ def render_explorer_tab():
                  options=df['heat_source'].unique(),
                  key="selected_heat_source"
                  )
+
+    # District search (only at Germany level)
+    if selected_state == "(Deutschland)":
+        all_districts = load_all_districts()
+        district_options = [""] + sorted(all_districts.keys())
+
+        searched_district = st.selectbox(
+            "🔍 Search for a district",
+            options=district_options,
+            index=0,
+            placeholder="Type to search...",
+            help="Search and jump directly to any district in Germany",
+            key="district_search"
+        )
+
+        if searched_district and searched_district in all_districts:
+            state_of_district = all_districts[searched_district]
+            st.session_state.selected_state = state_of_district
+            navigate_to_district(state_of_district, searched_district)
+            st.rerun()
 
     # Display map with click handling for drill-down navigation
     with col_map:
