@@ -92,6 +92,55 @@ def navigate_to_district(state_name: str, district_name: str):
     st.session_state.nav_selected_district = district_name
 
 
+def render_breadcrumb():
+    """Render breadcrumb navigation for drill-down hierarchy.
+
+    Displays clickable breadcrumb trail showing current location:
+    - Germany (always shown, clickable to return to top level)
+    - > {State} (shown when state selected)
+    - > {District} (shown when district selected)
+
+    Uses st.button() for each level to enable navigation.
+    """
+    current_level = st.session_state.nav_current_level
+    selected_state = st.session_state.nav_selected_state
+    selected_district = st.session_state.nav_selected_district
+
+    # Create horizontal container for breadcrumb buttons
+    breadcrumb_cols = st.columns([1, 0.2, 2, 0.2, 3, 5])
+
+    with breadcrumb_cols[0]:
+        # Germany button - always visible, clickable when not at germany level
+        if current_level == "germany":
+            st.markdown("**Germany**")
+        else:
+            if st.button("Germany", key="breadcrumb_germany", type="secondary"):
+                navigate_to_germany()
+                st.rerun()
+
+    # Show separator and state if at state or district level
+    if current_level in ["state", "district"] and selected_state:
+        with breadcrumb_cols[1]:
+            st.markdown("**>**")
+
+        with breadcrumb_cols[2]:
+            if current_level == "state":
+                st.markdown(f"**{selected_state}**")
+            else:
+                # At district level, state is clickable
+                if st.button(selected_state, key="breadcrumb_state", type="secondary"):
+                    navigate_to_state(selected_state)
+                    st.rerun()
+
+    # Show separator and district if at district level
+    if current_level == "district" and selected_district:
+        with breadcrumb_cols[3]:
+            st.markdown("**>**")
+
+        with breadcrumb_cols[4]:
+            st.markdown(f"**{selected_district}**")
+
+
 def main():
     # Create navigation tabs
     tab_explorer, tab_compare, tab_insights = st.tabs(["Explorer", "Compare", "Insights"])
@@ -108,6 +157,10 @@ def main():
 
 def render_explorer_tab():
     """Render the Explorer tab with map and statistics."""
+    # Render breadcrumb navigation for drill-down hierarchy
+    render_breadcrumb()
+    st.divider()
+
     selected_state = st.session_state.selected_state
     selected_building_type = st.session_state.selected_building_type
     selected_heat_source = st.session_state.selected_heat_source
