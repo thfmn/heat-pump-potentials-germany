@@ -315,6 +315,10 @@ def render_explorer_tab():
             logger.exception("Failed to render map: %s", str(e))
             st.error(f"Failed to render map: {str(e)}")
 
+        # Data attribution footer
+        st.caption("Data: [FfE Open Data Portal](https://opendata.ffe.de/) (2022)")
+        st.caption("Visualization: Heat Pump Potentials Germany")
+
     # Display statistics
     with col_stats:
         st.subheader("Statistics")
