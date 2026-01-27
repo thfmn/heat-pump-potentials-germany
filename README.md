@@ -24,6 +24,36 @@ Germany has committed to ambitious climate targets, including carbon neutrality 
 
 By making this data accessible through an interactive visualization, the application enables data-driven decision-making for Germany's energy transition (Energiewende).
 
+## Installation
+
+```bash
+# Clone repository
+git clone https://github.com/your-username/heat-pump-potentials-germany.git
+cd heat-pump-potentials-germany
+
+# Install dependencies (requires uv - https://docs.astral.sh/uv/)
+uv sync
+
+# Run application
+uv run streamlit run webapp/app.py
+```
+
+The application will be available at `http://localhost:8501`.
+
+### Prerequisites
+
+- Python 3.11 or higher
+- [uv](https://docs.astral.sh/uv/) package manager (recommended) or pip
+
+### Alternative Installation with pip
+
+If you prefer using pip:
+
+```bash
+pip install -e .
+streamlit run webapp/app.py
+```
+
 ## Data Sources
 The data is retrieved from dedicated API endpoints provided by the [FfE Open Data Portal](https://opendata.ffe.de/), containing detailed information on heat pump potentials at the state and district levels. The geographical information essential for visualization is obtained from publicly available GeoJSON files.
 
