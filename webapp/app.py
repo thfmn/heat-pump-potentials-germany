@@ -153,16 +153,13 @@ def render_breadcrumb():
 
 def main():
     # Create navigation tabs
-    tab_explorer, tab_compare, tab_insights = st.tabs(["Explorer", "Compare", "Insights"])
+    tab_explorer, tab_compare = st.tabs(["Explorer", "Compare"])
 
     with tab_explorer:
         render_explorer_tab()
 
     with tab_compare:
         render_compare_tab()
-
-    with tab_insights:
-        st.info("Insights tab - implementation pending (ML-3)")
 
 
 def render_explorer_tab():
