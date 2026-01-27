@@ -41,22 +41,21 @@ def get_result_df(selected_state, selected_building_type, selected_heat_source):
         conn.execute(create_table_query)
 
     if selected_state == "(Deutschland)":
-        # Create query
-        select_data_query = f"""
+        # Create query with parameterized placeholders to prevent SQL injection
+        select_data_query = """
         SELECT * FROM data
-        WHERE building_type = '{selected_building_type}'
-        AND heat_source = '{selected_heat_source}'
+        WHERE building_type = ?
+        AND heat_source = ?
         """
+        result_df = conn.execute(select_data_query, [selected_building_type, selected_heat_source]).fetchdf()
     else:
-        select_data_query = f"""
+        select_data_query = """
         SELECT * FROM data
-        WHERE building_type = '{selected_building_type}'
-        AND heat_source = '{selected_heat_source}'
-        AND federal_state = '{selected_state}'
+        WHERE building_type = ?
+        AND heat_source = ?
+        AND federal_state = ?
         """
-    
-    # Fetch DataFrame
-    result_df = conn.execute(select_data_query).fetchdf()
+        result_df = conn.execute(select_data_query, [selected_building_type, selected_heat_source, selected_state]).fetchdf()
 
     # Close DuckDB connection
     conn.close()
