@@ -319,6 +319,50 @@ def render_explorer_tab():
         st.caption("Data: [FfE Open Data Portal](https://opendata.ffe.de/) (2022)")
         st.caption("Visualization: Heat Pump Potentials Germany")
 
+        # Export buttons
+        st.divider()
+        export_col1, export_col2 = st.columns(2)
+
+        with export_col1:
+            # Download Map as PNG button
+            try:
+                png_bytes = fig.to_image(format="png", width=1200, height=800, scale=2)
+                filename_png = f"heat_pump_map_{selected_state}_{selected_building_type}.png"
+                filename_png = filename_png.replace(" ", "_").replace("(", "").replace(")", "")
+                st.download_button(
+                    label="Download Map (PNG)",
+                    data=png_bytes,
+                    file_name=filename_png,
+                    mime="image/png",
+                    key="download_map_png",
+                )
+            except Exception as e:
+                logger.warning("Failed to generate PNG export: %s", str(e))
+                st.warning("PNG export not available")
+
+        with export_col2:
+            # Download Data as CSV button
+            # Filter data to current selection
+            filtered_df = df[
+                (df['building_type'] == selected_building_type) &
+                (df['heat_source'] == selected_heat_source)
+            ].copy()
+
+            # Remove geometry column for cleaner export (if present)
+            export_cols = [c for c in filtered_df.columns if c != 'geometry']
+            export_df = filtered_df[export_cols]
+
+            csv_data = export_df.to_csv(index=False)
+            filename_csv = f"heat_pump_data_{selected_state}_{selected_building_type}.csv"
+            filename_csv = filename_csv.replace(" ", "_").replace("(", "").replace(")", "")
+            st.download_button(
+                label="Download Data (CSV)",
+                data=csv_data,
+                file_name=filename_csv,
+                mime="text/csv",
+                key="download_data_csv",
+            )
+
     # Display statistics
     with col_stats:
         st.subheader("Statistics")
