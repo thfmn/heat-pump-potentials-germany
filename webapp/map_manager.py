@@ -67,11 +67,12 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
     """
     lat, lon, zoom = 51.1657, 10.4515, 5
 
-    query_str = (
-        f"building_type == '{selected_building_type}' "
-        f"& heat_source == '{selected_heat_source}'"
+    # Filter using boolean indexing (safer than f-string queries)
+    mask = (
+        (result_df['building_type'] == selected_building_type)
+        & (result_df['heat_source'] == selected_heat_source)
     )
-    filtered_df = result_df.query(query_str).copy()
+    filtered_df = result_df[mask].copy()
 
     # Calculate rank within current view (1 = highest value)
     filtered_df['rank'] = filtered_df['value'].rank(ascending=False, method='min').astype(int)
@@ -164,12 +165,13 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
     """
     lat, lon, zoom = set_geographical_values(selected_state)
 
-    query_str = (
-        f"building_type == '{selected_building_type}' "
-        f"& heat_source == '{selected_heat_source}' "
-        f"& federal_state == '{selected_state}'"
+    # Filter using boolean indexing (safer than f-string queries)
+    mask = (
+        (state_df['building_type'] == selected_building_type)
+        & (state_df['heat_source'] == selected_heat_source)
+        & (state_df['federal_state'] == selected_state)
     )
-    filtered_df = state_df.query(query_str).copy()
+    filtered_df = state_df[mask].copy()
 
     # Calculate rank within current view (1 = highest value)
     filtered_df['rank'] = filtered_df['value'].rank(ascending=False, method='min').astype(int)
