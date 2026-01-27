@@ -1,7 +1,6 @@
 import requests
 import pandas as pd
 import duckdb
-import json
 from config import BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING, FEDERAL_STATES
 
 
