@@ -31,3 +31,141 @@ This row indicates:
 - State: Bayern (Bavaria)
 - District type: Kreisfreie Städte (independent city)
 - Geometry: WKT polygon defining the district boundary
+
+---
+
+## Value Ranges and Meanings
+
+### The `value` Column
+
+The `value` column represents the **proportion of buildings suitable for a specific heat pump type** within a given district and building category. This is the core metric displayed on the choropleth maps.
+
+#### Range
+
+| Minimum | Maximum | Unit |
+|---------|---------|------|
+| 0.0000 | 0.9809 | Proportion (0-1 scale) |
+
+Values are stored as decimal proportions but displayed as percentages in the application (e.g., 0.7565 → 75.65%).
+
+#### Statistical Distribution (across all ~12,000 data rows)
+
+| Statistic | Value |
+|-----------|-------|
+| Mean | 0.4118 (41.2%) |
+| Median | 0.3711 (37.1%) |
+| Standard Deviation | 0.2474 |
+
+#### Value Distribution
+
+| Range | Percentage of Records | Interpretation |
+|-------|----------------------|----------------|
+| 0.00 - 0.25 (0-25%) | 31.6% | Low suitability |
+| 0.25 - 0.50 (25-50%) | 34.9% | Moderate suitability |
+| 0.50 - 0.75 (50-75%) | 20.2% | Good suitability |
+| 0.75 - 1.00 (75-100%) | 13.3% | High suitability |
+
+#### Interpretation Guidelines
+
+- **0.0 (0%)**: No buildings in this category are suitable for this heat pump type
+- **0.25 (25%)**: Low suitability - approximately 1 in 4 buildings could use this heat pump type
+- **0.50 (50%)**: Moderate suitability - half of buildings could use this heat pump type
+- **0.75 (75%)**: Good suitability - most buildings could use this heat pump type
+- **1.0 (100%)**: All buildings in this category are suitable (theoretical maximum; actual max observed is ~98%)
+
+#### Color Scale Mapping
+
+On the map visualization, values are mapped to a red-yellow-green color scale:
+
+| Color | Value Range | Meaning |
+|-------|-------------|---------|
+| Red | 0.0 - 0.33 | Low suitability |
+| Yellow | 0.33 - 0.66 | Moderate suitability |
+| Green | 0.66 - 1.0 | High suitability |
+
+### The `district_type` Column
+
+| Value | German Term | Description |
+|-------|-------------|-------------|
+| `Kreisfreie Städte` | Kreisfreie Stadt | Independent city not belonging to any district; typically larger urban areas |
+| `Landkreise` | Landkreis | Rural district; administrative unit containing multiple municipalities |
+| `K` | (Abbreviation) | Short form for Kreisfreie Städte |
+| `L` | (Abbreviation) | Short form for Landkreise |
+
+---
+
+## Building Type Definitions
+
+The `building_type` column uses numeric codes to categorize buildings by their residential structure. These codes originate from the FfE data classification system.
+
+| Code | Label | Description |
+|------|-------|-------------|
+| 1 | One- and Two-family Houses | Detached single-family homes and duplexes; most common residential type in Germany |
+| 6 | Apartment Buildings (3-6) | Multi-family buildings with 3 to 6 dwelling units |
+| 9 | Row Houses | Terraced/townhouse style homes sharing walls with neighbors |
+| 11 | Semi-detached Houses | Two attached homes sharing a common wall |
+| 38 | Apartment Buildings: 7 and More Apartments | Large multi-family buildings with 7 or more dwelling units |
+| 100 | Total | Aggregate of all building types combined |
+
+### Building Type Context
+
+The building type significantly affects heat pump suitability:
+
+- **One- and Two-family Houses (1)**: Often best suited for all heat pump types due to available outdoor space for units and ground access for geothermal options
+- **Row Houses (9) and Semi-detached (11)**: Moderate suitability; shared walls may limit some installation options
+- **Apartment Buildings (6, 38)**: Air-source typically most viable; ground-source options may be limited by shared property and space constraints
+- **Total (100)**: Weighted average across all building types in the district
+
+---
+
+## Heat Source Definitions
+
+The `heat_source` column identifies the type of heat pump technology being evaluated. Each heat source has different installation requirements and suitability factors.
+
+| Code | Label | Description |
+|------|-------|-------------|
+| 0 | Total | Aggregate suitability across all heat pump types |
+| 1 | Air | Air-source heat pump (Luft-Wärmepumpe); extracts heat from outdoor air |
+| 2 | Ground Probe | Ground-source heat pump using vertical borehole probes (Erdwärmesonde); requires drilling 50-200m deep |
+| 3 | Ground Collector | Ground-source heat pump using horizontal collectors (Erdkollektor); requires large surface area at 1-2m depth |
+| 4 | Solar-Thermal Energy and Ice Storage | Hybrid system combining solar thermal collectors with ice storage (Eisspeicher); innovative technology |
+
+### Heat Source Characteristics
+
+| Heat Source | Typical Efficiency (COP) | Space Required | Installation Complexity |
+|-------------|-------------------------|----------------|------------------------|
+| Air (1) | 2.5 - 4.0 | Minimal (outdoor unit) | Low |
+| Ground Probe (2) | 4.0 - 5.0 | Minimal surface area | High (drilling required) |
+| Ground Collector (3) | 3.5 - 4.5 | Large (1.5-2x heated area) | Medium |
+| Solar-Thermal + Ice (4) | 3.5 - 4.5 | Moderate | High |
+
+**COP (Coefficient of Performance)**: Ratio of heat output to electrical input. Higher values indicate better efficiency.
+
+---
+
+## Geometry (WKT) Format Explanation
+
+The `geometry` column contains district boundaries in Well-Known Text (WKT) format, a standard text representation for vector geometry.
+
+### Format
+
+```
+POLYGON ((lon1 lat1, lon2 lat2, lon3 lat3, ..., lon1 lat1))
+```
+
+- Coordinates are in WGS84 (EPSG:4326) - standard GPS coordinate system
+- Format: `longitude latitude` (note: longitude comes first)
+- First and last coordinate must be identical to close the polygon
+- Some districts may use `MULTIPOLYGON` for non-contiguous areas
+
+### Example
+
+```
+POLYGON ((11.49004936218256 48.74010086059582, 11.495579719543457 48.73266220092785, ...))
+```
+
+This defines the boundary of Ingolstadt starting at approximately 11.49°E, 48.74°N.
+
+### Usage in Application
+
+The WKT geometry is parsed using Shapely's `wkt.loads()` function and converted to a GeoDataFrame for rendering with Plotly's choropleth map.
