@@ -141,8 +141,8 @@ def main():
 
     # Display statistics
     with col_stats:
-        st.subheader("Stats")
-        st.bar_chart({'Data': [1, 2, 3, 7, 5]}) # Dummy stats for now
+        st.subheader("Statistics")
+        st.info("Statistics panel - implementation pending")
 
 if __name__ == "__main__":
     main()
