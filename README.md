@@ -176,3 +176,11 @@ When reporting bugs, please include:
 - Steps to reproduce the issue
 - Expected vs actual behavior
 - Any error messages or logs
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Third-Party Data
+
+The heat pump suitability data used in this application is sourced from the [FfE Open Data Portal](https://opendata.ffe.de/). Please refer to the FfE Open Data Portal for the specific terms and conditions governing the use of their data.
