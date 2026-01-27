@@ -6,6 +6,10 @@ from data_manager import fetch_data, preprocess_data_germany, update_df_categori
 from map_manager import create_germany_map, create_state_map, set_geographical_values
 from shapely import wkt
 from config import FEDERAL_STATES, STATE_GEOJSON_URL, DISTRICT_GEOJSON_URL, STATE_DATA_URL, DISTRICT_DATA_SELECTION
+from logging_config import setup_logging
+
+# Initialize logging
+logger = setup_logging()
 
 # Set the layout configuration of the Streamlit app
 st.set_page_config(layout="wide")
@@ -32,6 +36,7 @@ def main():
     try:
         if st.session_state.selected_state == "(Deutschland)":
             # API call for full country scope
+            logger.info("Loading Germany-level data from API")
             with st.spinner("Loading Germany data from API..."):
                 raw_json = fetch_data(STATE_DATA_URL)
                 df = preprocess_data_germany(raw_json)
@@ -44,6 +49,7 @@ def main():
             data_path = os.path.join(dir_path, f"data/districts/{DISTRICT_DATA_SELECTION.get(selected_state)}")
 
             # Choose and process correct local data depending on state_selection from data/districts
+            logger.info("Loading state data from CSV: %s", selected_state)
             with st.spinner("Loading state data..."):
                 df = pd.read_csv(data_path)
                 update_df_categories(df)
@@ -51,9 +57,11 @@ def main():
                 gdf = gpd.GeoDataFrame(df, geometry='geometry')
                 result_df = gdf
     except FileNotFoundError:
+        logger.error("Data file not found for state: %s", selected_state)
         st.error(f"Data file not found for {selected_state}. Please check if the data files are available.")
         return
     except Exception as e:
+        logger.exception("Failed to load data: %s", str(e))
         st.error(f"Failed to load data: {str(e)}")
         return
 
@@ -101,6 +109,7 @@ def main():
 
             st.plotly_chart(fig, use_container_width=True)
         except Exception as e:
+            logger.exception("Failed to render map: %s", str(e))
             st.error(f"Failed to render map: {str(e)}")
 
     # Display statistics

@@ -1,7 +1,11 @@
+import logging
 import requests
 import pandas as pd
 import duckdb
 from config import BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING, FEDERAL_STATES
+
+# Get logger instance
+logger = logging.getLogger("heat_pump_webapp")
 
 
 # Allowed values for input validation
@@ -48,11 +52,14 @@ def validate_inputs(building_type: str, heat_source: str, selected_state: str) -
 
 # Fetch data from API
 def fetch_data(url):
+    logger.info("Fetching data from API: %s", url)
     try:
         response = requests.get(url)
         response.raise_for_status()
+        logger.info("API request successful, status code: %d", response.status_code)
         return response.json()
-    except requests.RequestException:
+    except requests.RequestException as e:
+        logger.error("API request failed: %s", str(e))
         return None
 
 # Data preprocessing
@@ -73,6 +80,8 @@ def update_df_categories(df):
 
 # Query data based upon user selections
 def get_result_df(selected_state, selected_building_type, selected_heat_source):
+    logger.debug("Query requested - state: %s, building: %s, heat: %s",
+                 selected_state, selected_building_type, selected_heat_source)
     # Validate all inputs against allowed values before executing any query
     validate_inputs(selected_building_type, selected_heat_source, selected_state)
 
