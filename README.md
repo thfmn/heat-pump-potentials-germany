@@ -128,6 +128,17 @@ District and state boundary geometries are sourced from publicly available GeoJS
 
 The current dataset reflects 2022 building stock assessments. Data updates depend on FfE publishing new analyses. Check the [FfE Open Data Portal](https://opendata.ffe.de/) for the latest available datasets.
 
+## Architecture
+
+For a detailed technical overview of the system architecture, including data flow diagrams, module descriptions, and security considerations, see the [Architecture Documentation](docs/ARCHITECTURE.md).
+
+The documentation covers:
+- System overview with component diagrams
+- Data flow for Germany-level and state-level views
+- Module responsibilities and interactions
+- File structure organization
+- Security measures including SQL injection prevention
+
 ## Technology Stack
 - **Streamlit**: Provides the framework for developing the interactive web interface.
 - **Pandas**: Used for data processing and analysis.
