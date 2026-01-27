@@ -1,18 +1,23 @@
 import plotly.express as px
-from shapely.geometry import mapping
 from config import STATE_GEO_VALUES
+from shapely.geometry import mapping
+
 
 # Set longitude and latitude (center) and zoom for each state selection
 def set_geographical_values(selected_state):
     return STATE_GEO_VALUES.get(selected_state, STATE_GEO_VALUES["(Deutschland)"])
 
 # Create and display map with choropleth layer
-def create_germany_map(result_df, selected_building_type, selected_heat_source, GEOJSON_URL):
+def create_germany_map(result_df, selected_building_type, selected_heat_source, geojson_url):
     lat, lon, zoom = 51.1657, 10.4515, 5
-    
-    fig = px.choropleth_mapbox(result_df.query(f"building_type == '{selected_building_type}' & heat_source == '{selected_heat_source}'"), 
-                            geojson=GEOJSON_URL, 
-                            locations='region', 
+
+    query_str = (
+        f"building_type == '{selected_building_type}' "
+        f"& heat_source == '{selected_heat_source}'"
+    )
+    fig = px.choropleth_mapbox(result_df.query(query_str),
+                            geojson=geojson_url,
+                            locations='region',
                             color='value',
                             featureidkey="properties.name",
                             color_continuous_scale='RdYlGn',
@@ -28,7 +33,7 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
         mapbox_zoom=zoom,
         mapbox_center={"lat": lat, "lon": lon},
         autosize=False,
-        width=800, 
+        width=800,
         height=800,
         coloraxis_colorbar=dict(
         title="Anteil in %",
@@ -44,12 +49,17 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
 
     return fig
 
-    
+
 def create_state_map(state_df, selected_state, selected_building_type, selected_heat_source):
     lat, lon, zoom = set_geographical_values(selected_state)
-    
-    filtered_df = state_df.query(f"building_type == '{selected_building_type}' & heat_source == '{selected_heat_source}' & federal_state == '{selected_state}'")
-    
+
+    query_str = (
+        f"building_type == '{selected_building_type}' "
+        f"& heat_source == '{selected_heat_source}' "
+        f"& federal_state == '{selected_state}'"
+    )
+    filtered_df = state_df.query(query_str)
+
     geojson = {
     "type": "FeatureCollection",
     "features": [
@@ -61,9 +71,9 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
         for idx, row in filtered_df.iterrows()
     ]
     }
-    
-    fig = px.choropleth_mapbox(filtered_df, 
-                            geojson=geojson, 
+
+    fig = px.choropleth_mapbox(filtered_df,
+                            geojson=geojson,
                             locations='district',
                             featureidkey="properties.district",
                             color='value',
@@ -72,7 +82,7 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
                             mapbox_style="carto-darkmatter",
                             opacity=1,
                             hover_name=filtered_df['district'],
-                            hover_data={'value': True} 
+                            hover_data={'value': True}
                            )
 
     fig.update_traces(hovertemplate='%{hovertext}<br>%{z:.1%}')
@@ -81,7 +91,7 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
         mapbox_zoom=zoom,
         mapbox_center={"lat": lat, "lon": lon},
         autosize=False,
-        width=800, 
+        width=800,
         height=800,
         coloraxis_colorbar=dict(
         title="Anteil in %",
@@ -96,4 +106,4 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
     )
 
     return fig
-    
+

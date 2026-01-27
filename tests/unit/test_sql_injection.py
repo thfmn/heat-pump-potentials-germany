@@ -7,7 +7,7 @@ import pytest
 # Add webapp to path so we can import data_manager
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "webapp"))
 
-from data_manager import InputValidationError, validate_inputs
+from utils import InputValidationError, validate_inputs
 
 
 class TestSQLInjectionPrevention:

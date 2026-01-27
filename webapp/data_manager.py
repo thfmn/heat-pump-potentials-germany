@@ -1,9 +1,10 @@
 import logging
-import requests
-import pandas as pd
+
 import duckdb
+import pandas as pd
+import requests
 from config import BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING
-from utils import validate_inputs, InputValidationError
+from utils import validate_inputs
 
 # Get logger instance
 logger = logging.getLogger("heat_pump_webapp")
@@ -27,7 +28,9 @@ def preprocess_data_germany(raw_json):
     df = pd.DataFrame(data).dropna(axis=1, how='all')
     drop_cols = ['id_opendata', 'id_region_type', 'region_type', 'year', 'internal_id']
     df.drop(drop_cols, axis=1, inplace=True)
-    df.rename(columns={'internal_id_1': 'building_type', 'internal_id_2': 'heat_source'}, inplace=True)
+    df.rename(
+        columns={'internal_id_1': 'building_type', 'internal_id_2': 'heat_source'}, inplace=True
+    )
     df['region'].replace(dict(zip(df['id_region'], df['region'])), inplace=True)
     df.drop(['id_region'], axis=1, inplace=True)
     return df
@@ -60,7 +63,8 @@ def get_result_df(selected_state, selected_building_type, selected_heat_source):
         WHERE building_type = ?
         AND heat_source = ?
         """
-        result_df = conn.execute(select_data_query, [selected_building_type, selected_heat_source]).fetchdf()
+        params = [selected_building_type, selected_heat_source]
+        result_df = conn.execute(select_data_query, params).fetchdf()
     else:
         select_data_query = """
         SELECT * FROM data
@@ -68,7 +72,8 @@ def get_result_df(selected_state, selected_building_type, selected_heat_source):
         AND heat_source = ?
         AND federal_state = ?
         """
-        result_df = conn.execute(select_data_query, [selected_building_type, selected_heat_source, selected_state]).fetchdf()
+        params = [selected_building_type, selected_heat_source, selected_state]
+        result_df = conn.execute(select_data_query, params).fetchdf()
 
     # Close DuckDB connection
     conn.close()

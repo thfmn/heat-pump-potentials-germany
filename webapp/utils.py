@@ -1,7 +1,6 @@
 """Shared utility functions for the heat pump webapp."""
 
-from config import BUILDING_TYPE_MAPPING, HEAT_SOURCE_MAPPING, FEDERAL_STATES
-
+from config import BUILDING_TYPE_MAPPING, FEDERAL_STATES, HEAT_SOURCE_MAPPING
 
 # Allowed values for input validation
 ALLOWED_BUILDING_TYPES = set(BUILDING_TYPE_MAPPING.values())
