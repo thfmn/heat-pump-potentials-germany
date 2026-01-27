@@ -279,7 +279,7 @@ def render_explorer_tab():
                 # Config removes Plotly logo from modebar
                 event = st.plotly_chart(
                     fig,
-                    use_container_width=True,
+                    width="stretch",
                     key="germany_map",
                     on_select="rerun",
                     selection_mode=["points"],
@@ -305,7 +305,7 @@ def render_explorer_tab():
                 # Config removes Plotly logo from modebar
                 event = st.plotly_chart(
                     fig,
-                    use_container_width=True,
+                    width="stretch",
                     key="state_map",
                     on_select="rerun",
                     selection_mode=["points"],
@@ -438,7 +438,7 @@ def render_explorer_tab():
                     ),
                 },
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
         else:
             st.info("No data available for the current selection.")
@@ -458,7 +458,7 @@ def render_explorer_tab():
                     ),
                 },
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
         else:
             st.info("No data available for the current selection.")
@@ -502,7 +502,7 @@ def render_explorer_tab():
                 height=250,
             )
 
-            st.plotly_chart(fig_building, use_container_width=True)
+            st.plotly_chart(fig_building, width="stretch")
         else:
             st.info("No building type data available for the current selection.")
 
@@ -616,7 +616,7 @@ def render_comparison_maps(state_data, selected_states, building_type, heat_sour
                     coloraxis_showscale=(idx == 0),  # Only show color scale on first map
                 )
                 st.plotly_chart(
-                    fig, use_container_width=True, config={"displaylogo": False}
+                    fig, width="stretch", config={"displaylogo": False}
                 )
             except Exception as e:
                 st.error(f"Failed to render map for {state}: {e}")
@@ -708,7 +708,7 @@ def render_district_detail_view(df, state_name, district_name):
                 height=300,
             )
 
-            st.plotly_chart(fig_building, use_container_width=True)
+            st.plotly_chart(fig_building, width="stretch")
         else:
             st.info("No building type data available for this district.")
 
@@ -755,7 +755,7 @@ def render_district_detail_view(df, state_name, district_name):
                 height=300,
             )
 
-            st.plotly_chart(fig_heat, use_container_width=True)
+            st.plotly_chart(fig_heat, width="stretch")
         else:
             st.info("No heat source data available for this district.")
 
@@ -847,7 +847,7 @@ def render_comparison_table(state_data, selected_states, building_type, heat_sou
             'Districts': st.column_config.NumberColumn('Districts', width='small'),
         },
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
     )
 
 
