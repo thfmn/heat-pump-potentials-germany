@@ -133,3 +133,46 @@ The current dataset reflects 2022 building stock assessments. Data updates depen
 - **Pandas**: Used for data processing and analysis.
 - **Plotly**: Responsible for creating the interactive and geographical visualizations presented in the app.
 - **DuckDB**: Operates as an in-memory SQL database (OLAP), allowing effective data management and queries.
+
+## Contributing
+
+We welcome contributions to improve this project. Please follow these guidelines:
+
+### Getting Started
+
+1. Fork the repository
+2. Clone your fork: `git clone https://github.com/your-username/heat-pump-potentials-germany.git`
+3. Create a feature branch: `git checkout -b feature/your-feature-name`
+4. Install development dependencies: `uv sync --all-extras`
+
+### Development Workflow
+
+1. Make your changes in the feature branch
+2. Run linting: `uv run ruff check webapp/ tests/`
+3. Run type checking: `uv run mypy webapp/`
+4. Run tests: `uv run pytest`
+5. Commit with clear, descriptive messages
+6. Push to your fork and submit a pull request
+
+### Code Standards
+
+- Follow PEP 8 style guidelines (enforced by ruff)
+- Add type hints for new functions
+- Write unit tests for new functionality
+- Use parameterized queries for any database operations (no string interpolation)
+- Update documentation for user-facing changes
+
+### Pull Request Process
+
+1. Ensure all tests pass and linting is clean
+2. Update the README.md if you change user-facing functionality
+3. Reference any related issues in your PR description
+4. Request review from maintainers
+
+### Reporting Issues
+
+When reporting bugs, please include:
+- Python version and operating system
+- Steps to reproduce the issue
+- Expected vs actual behavior
+- Any error messages or logs
