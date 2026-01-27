@@ -601,12 +601,15 @@ def render_comparison_maps(state_data, selected_states, building_type, heat_sour
             st.markdown(f"**{state}**")
             try:
                 fig = create_state_map(gdf, state, building_type, heat_source)
+                # Get current zoom and reduce it for smaller comparison view
+                current_zoom = fig.layout.mapbox.zoom
                 # Adjust map size for comparison view
                 fig.update_layout(
                     width=None,
                     height=400,
                     margin=dict(l=0, r=0, t=0, b=0),
                     coloraxis_showscale=(idx == 0),  # Only show color scale on first map
+                    mapbox_zoom=current_zoom - 0.7,  # Zoom out for smaller container
                 )
                 st.plotly_chart(
                     fig, width="stretch", config={"displaylogo": False}
