@@ -1,5 +1,11 @@
 # Heat Pump Potential Analysis in Germany
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://heatpump-potential-germany.streamlit.app/)
+
+**[Live Demo](https://heatpump-potential-germany.streamlit.app/)** | Interactive visualization of heat pump suitability across Germany
+
+---
+
 ## Project Overview
 
 ### What It Does
