@@ -101,7 +101,32 @@ When you launch the application, you'll see an interactive map of Germany with t
 4. Hover over districts to identify areas with highest potential
 
 ## Data Sources
-The data is retrieved from dedicated API endpoints provided by the [FfE Open Data Portal](https://opendata.ffe.de/), containing detailed information on heat pump potentials at the state and district levels. The geographical information essential for visualization is obtained from publicly available GeoJSON files.
+
+### FfE Open Data Portal
+
+All heat pump suitability data used in this application comes from the **Forschungsstelle für Energiewirtschaft e.V. (FfE)** Open Data Portal:
+
+- **Portal URL**: [https://opendata.ffe.de/](https://opendata.ffe.de/)
+- **Data Year**: **2022** (latest available dataset)
+- **Dataset**: Heat pump suitability analysis for German buildings
+- **License**: Data is provided under FfE Open Data terms - see portal for current licensing
+
+The FfE is a non-profit research organization focused on energy economics and technology. Their heat pump potential analysis evaluates building characteristics across Germany to determine suitability for various heat pump types.
+
+### Data Coverage
+
+| Level | Coverage | Records |
+|-------|----------|---------|
+| State (Bundesland) | All 16 federal states | ~16 regions |
+| District (Landkreis/Kreisfreie Stadt) | ~400 districts | ~400 regions |
+
+### Geographic Data
+
+District and state boundary geometries are sourced from publicly available GeoJSON files maintained by German government agencies. Geometries are stored in WKT (Well-Known Text) format in the district CSV files.
+
+### Data Refresh
+
+The current dataset reflects 2022 building stock assessments. Data updates depend on FfE publishing new analyses. Check the [FfE Open Data Portal](https://opendata.ffe.de/) for the latest available datasets.
 
 ## Technology Stack
 - **Streamlit**: Provides the framework for developing the interactive web interface.
