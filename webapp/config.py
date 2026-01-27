@@ -21,10 +21,12 @@ Constants:
         to human-readable labels.
     HEAT_SOURCE_MAPPING (dict[int, str]): Mapping from FfE heat source codes
         to human-readable labels.
+    CHART_COLORS_GREEN (list[str]): Green color palette for building type charts.
+    CHART_COLORS_HEAT (list[str]): Heat-themed color palette for heat source charts.
 """
 
-STATE_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
-DISTRICT_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.88"
+STATE_DATA_URL = "https://api.opendata.ffe.de/opendata?id_opendata=87"
+DISTRICT_DATA_URL = "https://api.opendata.ffe.de/opendata?id_opendata=88"
 
 
 STATE_GEOJSON_URL = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/2_hoch.geo.json"
@@ -102,4 +104,6 @@ HEAT_SOURCE_MAPPING = {
         4: 'Solar-Thermal Energy and Ice Storage'
     }
 
-
+# Color constants for chart visualizations (colorblind-friendly)
+CHART_COLORS_GREEN = ['#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#3498db', '#2980b9']
+CHART_COLORS_HEAT = ['#e74c3c', '#e67e22', '#f1c40f', '#9b59b6', '#1abc9c']
