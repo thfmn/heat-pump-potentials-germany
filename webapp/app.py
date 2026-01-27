@@ -24,6 +24,7 @@ from data_manager import fetch_data, get_result_df, preprocess_data_germany, upd
 from logging_config import setup_logging
 from map_manager import create_germany_map, create_state_map, set_geographical_values
 from shapely import wkt
+from stats_manager import calculate_summary_stats, get_top_bottom_districts
 
 # Initialize logging
 logger = setup_logging()
@@ -142,7 +143,50 @@ def main():
     # Display statistics
     with col_stats:
         st.subheader("Statistics")
-        st.info("Statistics panel - implementation pending")
+
+        # Calculate summary statistics from the loaded dataframe
+        stats = calculate_summary_stats(df, selected_building_type, selected_heat_source)
+        top_districts, bottom_districts = get_top_bottom_districts(
+            df, selected_building_type, selected_heat_source, n=10
+        )
+
+        # Metric cards using st.columns(4) layout
+        metric_col1, metric_col2 = st.columns(2)
+        metric_col3, metric_col4 = st.columns(2)
+
+        with metric_col1:
+            st.metric(
+                label="Average Suitability",
+                value=f"{stats['mean']:.1f}%",
+                help="Mean suitability percentage across all districts/regions"
+            )
+
+        with metric_col2:
+            st.metric(
+                label="Coverage",
+                value=f"{stats['count']}",
+                help="Number of districts/regions in the current selection"
+            )
+
+        with metric_col3:
+            top_name = top_districts.iloc[0]['district'] if not top_districts.empty else "N/A"
+            top_val = top_districts.iloc[0]['value'] if not top_districts.empty else 0
+            st.metric(
+                label="Top District",
+                value=f"{top_val:.1f}%" if not top_districts.empty else "N/A",
+                help=f"Highest: {top_name}"
+            )
+
+        with metric_col4:
+            bottom_name = (
+                bottom_districts.iloc[0]['district'] if not bottom_districts.empty else "N/A"
+            )
+            bottom_val = bottom_districts.iloc[0]['value'] if not bottom_districts.empty else 0
+            st.metric(
+                label="Bottom District",
+                value=f"{bottom_val:.1f}%" if not bottom_districts.empty else "N/A",
+                help=f"Lowest: {bottom_name}"
+            )
 
 if __name__ == "__main__":
     main()
