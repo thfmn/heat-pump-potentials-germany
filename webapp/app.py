@@ -161,6 +161,27 @@ def render_explorer_tab():
     render_breadcrumb()
     st.divider()
 
+    # Check if at district level - show district detail view
+    if st.session_state.nav_current_level == "district":
+        nav_state = st.session_state.nav_selected_state
+        nav_district = st.session_state.nav_selected_district
+        if nav_state and nav_district:
+            # Load state data for district view
+            try:
+                dir_path = os.path.dirname(os.path.realpath(__file__))
+                filename = DISTRICT_DATA_SELECTION.get(nav_state)
+                data_path = os.path.join(dir_path, f"data/districts/{filename}")
+                df = pd.read_csv(data_path)
+                update_df_categories(df)
+                render_district_detail_view(df, nav_state, nav_district)
+                return
+            except FileNotFoundError:
+                st.error(f"Data file not found for {nav_state}.")
+                return
+            except Exception as e:
+                st.error(f"Failed to load data: {e}")
+                return
+
     selected_state = st.session_state.selected_state
     selected_building_type = st.session_state.selected_building_type
     selected_heat_source = st.session_state.selected_heat_source
@@ -534,6 +555,151 @@ def render_comparison_maps(state_data, selected_states, building_type, heat_sour
                 st.plotly_chart(fig, use_container_width=True)
             except Exception as e:
                 st.error(f"Failed to render map for {state}: {e}")
+
+
+def render_district_detail_view(df, state_name, district_name):
+    """Render detailed view for a single district.
+
+    Shows breakdown of suitability by building type and heat source,
+    plus district metadata and navigation back to state view.
+
+    Args:
+        df: DataFrame containing all district data for the state.
+        state_name: Name of the state containing this district.
+        district_name: Name of the district to display.
+    """
+    # Filter data for this district
+    district_df = df[df['district'] == district_name].copy()
+
+    if district_df.empty:
+        st.error(f"No data found for district: {district_name}")
+        return
+
+    # Get district metadata from first row
+    if 'district_type' in district_df.columns:
+        district_type = district_df['district_type'].iloc[0]
+    else:
+        district_type = "Unknown"
+
+    # Header with district name and metadata
+    st.header(f"{district_name}")
+
+    # Metadata section
+    col_meta1, col_meta2, col_meta3 = st.columns(3)
+    with col_meta1:
+        st.metric("State", state_name)
+    with col_meta2:
+        st.metric("District Type", district_type)
+    with col_meta3:
+        # Count unique combinations
+        num_building_types = district_df['building_type'].nunique()
+        st.metric("Building Types", num_building_types)
+
+    st.divider()
+
+    # Create two columns for the charts
+    col_building, col_heat = st.columns(2)
+
+    # Building type breakdown chart
+    with col_building:
+        st.subheader("Suitability by Building Type")
+
+        # Filter to Total heat source (code 0) for building type comparison
+        building_data = district_df[district_df['heat_source'] == 'Total'].copy()
+
+        if not building_data.empty:
+            # Sort by value descending
+            building_data = building_data.sort_values('value', ascending=True)
+            # Convert to percentage
+            building_data['value_pct'] = building_data['value'] * 100
+
+            # Define color sequence
+            color_sequence = ['#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#3498db', '#2980b9']
+
+            fig_building = px.bar(
+                building_data,
+                x='value_pct',
+                y='building_type',
+                orientation='h',
+                color_discrete_sequence=color_sequence,
+                labels={
+                    'value_pct': 'Suitability (%)',
+                    'building_type': 'Building Type',
+                },
+                text='value_pct',
+            )
+
+            fig_building.update_traces(
+                texttemplate='%{text:.1f}%',
+                textposition='outside',
+            )
+
+            fig_building.update_layout(
+                xaxis_title='Suitability (%)',
+                yaxis_title='',
+                showlegend=False,
+                margin=dict(l=10, r=10, t=10, b=10),
+                xaxis=dict(range=[0, 100]),
+                height=300,
+            )
+
+            st.plotly_chart(fig_building, use_container_width=True)
+        else:
+            st.info("No building type data available for this district.")
+
+    # Heat source breakdown chart
+    with col_heat:
+        st.subheader("Suitability by Heat Source")
+
+        # Filter to Total building type (code 100) for heat source comparison
+        heat_data = district_df[district_df['building_type'] == 'Total'].copy()
+
+        if not heat_data.empty:
+            # Sort by value descending
+            heat_data = heat_data.sort_values('value', ascending=True)
+            # Convert to percentage
+            heat_data['value_pct'] = heat_data['value'] * 100
+
+            # Define color sequence for heat sources
+            color_sequence = ['#e74c3c', '#e67e22', '#f1c40f', '#9b59b6', '#1abc9c']
+
+            fig_heat = px.bar(
+                heat_data,
+                x='value_pct',
+                y='heat_source',
+                orientation='h',
+                color_discrete_sequence=color_sequence,
+                labels={
+                    'value_pct': 'Suitability (%)',
+                    'heat_source': 'Heat Source',
+                },
+                text='value_pct',
+            )
+
+            fig_heat.update_traces(
+                texttemplate='%{text:.1f}%',
+                textposition='outside',
+            )
+
+            fig_heat.update_layout(
+                xaxis_title='Suitability (%)',
+                yaxis_title='',
+                showlegend=False,
+                margin=dict(l=10, r=10, t=10, b=10),
+                xaxis=dict(range=[0, 100]),
+                height=300,
+            )
+
+            st.plotly_chart(fig_heat, use_container_width=True)
+        else:
+            st.info("No heat source data available for this district.")
+
+    st.divider()
+
+    # Back to State button
+    if st.button(f"← Back to {state_name}", key="back_to_state", type="primary"):
+        navigate_to_state(state_name)
+        st.rerun()
 
 
 def render_comparison_table(state_data, selected_states, building_type, heat_source):
