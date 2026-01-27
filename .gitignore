@@ -130,3 +130,10 @@ scratch/
 # Project specific (from original)
 webapp/memory
 webapp/memory.wal
+
+# Local workflow & planning files - never commit
+PRD.md
+PRD-TEMPLATE.md
+PROGRESS-TEMPLATE.txt
+CLAUDE.md
+progress.txt
