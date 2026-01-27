@@ -25,11 +25,6 @@ if 'selected_heat_source' not in st.session_state:
 
 
 def main():
-
-    # ------------- DEBUG---------------
-    #st.write(st.session_state)
-    # ------------- /DEBUG---------------
-
     selected_state = st.session_state.selected_state
     selected_building_type = st.session_state.selected_building_type
     selected_heat_source = st.session_state.selected_heat_source
