@@ -74,6 +74,9 @@ def update_df_categories(df):
 
 # Query data based upon user selections
 def get_result_df(selected_state, selected_building_type, selected_heat_source):
+    # Validate all inputs against allowed values before executing any query
+    validate_inputs(selected_building_type, selected_heat_source, selected_state)
+
     # Connect to temp DuckDB database
     conn = duckdb.connect(database=':memory:', read_only=False)
 
