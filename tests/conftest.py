@@ -75,49 +75,40 @@ def mock_api_response():
     """Create a mocked FfE API response structure.
 
     Returns:
-        list containing a dict with 'data' key holding sample API records.
-        Structure matches the actual FfE Open Data Portal response format.
+        dict with 'data' key holding sample API records.
+        Structure matches the actual FfE Open Data Portal API response format.
+        Each record has 'internal_id' as [building_type, heat_source] array.
     """
-    return [{
+    return {
+        "id_opendata": 87,
+        "title": "Heat Pump Potentials (German Federal States)",
         "data": [
             {
                 "id_opendata": 87,
-                "id_region": "08",
-                "id_region_type": 1,
-                "region": "Baden-Württemberg",
-                "region_type": "Bundesland",
+                "id_region_type": 2,
+                "id_region": 8,  # Baden-Württemberg
                 "year": 2022,
-                "internal_id": "some_id",
-                "internal_id_1": 1,  # building_type code
-                "internal_id_2": 1,  # heat_source code
+                "internal_id": [1, 1],  # [building_type, heat_source]
                 "value": 0.6543
             },
             {
                 "id_opendata": 87,
-                "id_region": "08",
-                "id_region_type": 1,
-                "region": "Baden-Württemberg",
-                "region_type": "Bundesland",
+                "id_region_type": 2,
+                "id_region": 8,  # Baden-Württemberg
                 "year": 2022,
-                "internal_id": "some_id_2",
-                "internal_id_1": 1,
-                "internal_id_2": 2,
+                "internal_id": [1, 2],
                 "value": 0.4321
             },
             {
                 "id_opendata": 87,
-                "id_region": "09",
-                "id_region_type": 1,
-                "region": "Bayern",
-                "region_type": "Bundesland",
+                "id_region_type": 2,
+                "id_region": 9,  # Bayern
                 "year": 2022,
-                "internal_id": "some_id_3",
-                "internal_id_1": 100,  # Total building type
-                "internal_id_2": 0,    # Total heat source
+                "internal_id": [100, 0],  # Total building type, Total heat source
                 "value": 0.7890
             }
         ]
-    }]
+    }
 
 
 @pytest.fixture

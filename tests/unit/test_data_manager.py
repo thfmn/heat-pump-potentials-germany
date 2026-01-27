@@ -148,75 +148,61 @@ class TestGetResultDf:
 
     def test_get_result_df_with_valid_germany_selection(self, sample_district_df_with_labels):
         """get_result_df returns filtered data for Deutschland selection."""
-        # Need to make data available as global 'df' for DuckDB
-        import data_manager
+        result = get_result_df(
+            df=sample_district_df_with_labels,
+            selected_state="(Deutschland)",
+            selected_building_type="One- and Two-family Houses",
+            selected_heat_source="Air"
+        )
 
-        try:
-            # Inject df into the module's namespace for DuckDB
-            data_manager.df = sample_district_df_with_labels
-
-            result = get_result_df(
-                selected_state="(Deutschland)",
-                selected_building_type="One- and Two-family Houses",
-                selected_heat_source="Air"
-            )
-
-            assert isinstance(result, pd.DataFrame)
-            # Should only have rows matching the filters
-            if len(result) > 0:
-                assert all(result["building_type"] == "One- and Two-family Houses")
-                assert all(result["heat_source"] == "Air")
-        finally:
-            # Cleanup
-            if "df" in data_manager.__dict__:
-                del data_manager.df
+        assert isinstance(result, pd.DataFrame)
+        # Should only have rows matching the filters
+        if len(result) > 0:
+            assert all(result["building_type"] == "One- and Two-family Houses")
+            assert all(result["heat_source"] == "Air")
 
     def test_get_result_df_with_valid_state_selection(self, sample_district_df_with_labels):
         """get_result_df returns filtered data for specific state selection."""
-        import data_manager
+        result = get_result_df(
+            df=sample_district_df_with_labels,
+            selected_state="Bayern",
+            selected_building_type="One- and Two-family Houses",
+            selected_heat_source="Air"
+        )
 
-        try:
-            data_manager.df = sample_district_df_with_labels
+        assert isinstance(result, pd.DataFrame)
+        if len(result) > 0:
+            assert all(result["building_type"] == "One- and Two-family Houses")
+            assert all(result["heat_source"] == "Air")
+            assert all(result["federal_state"] == "Bayern")
 
-            result = get_result_df(
-                selected_state="Bayern",
-                selected_building_type="One- and Two-family Houses",
-                selected_heat_source="Air"
-            )
-
-            assert isinstance(result, pd.DataFrame)
-            if len(result) > 0:
-                assert all(result["building_type"] == "One- and Two-family Houses")
-                assert all(result["heat_source"] == "Air")
-                assert all(result["federal_state"] == "Bayern")
-        finally:
-            if "df" in data_manager.__dict__:
-                del data_manager.df
-
-    def test_get_result_df_invalid_building_type_raises(self):
+    def test_get_result_df_invalid_building_type_raises(self, sample_district_df_with_labels):
         """get_result_df raises InputValidationError for invalid building_type."""
         with pytest.raises(InputValidationError) as exc_info:
             get_result_df(
+                df=sample_district_df_with_labels,
                 selected_state="Bayern",
                 selected_building_type="Invalid Type",
                 selected_heat_source="Air"
             )
         assert "Invalid building type" in str(exc_info.value)
 
-    def test_get_result_df_invalid_heat_source_raises(self):
+    def test_get_result_df_invalid_heat_source_raises(self, sample_district_df_with_labels):
         """get_result_df raises InputValidationError for invalid heat_source."""
         with pytest.raises(InputValidationError) as exc_info:
             get_result_df(
+                df=sample_district_df_with_labels,
                 selected_state="Bayern",
                 selected_building_type="Total",
                 selected_heat_source="Invalid Source"
             )
         assert "Invalid heat source" in str(exc_info.value)
 
-    def test_get_result_df_invalid_state_raises(self):
+    def test_get_result_df_invalid_state_raises(self, sample_district_df_with_labels):
         """get_result_df raises InputValidationError for invalid state."""
         with pytest.raises(InputValidationError) as exc_info:
             get_result_df(
+                df=sample_district_df_with_labels,
                 selected_state="Invalid State",
                 selected_building_type="Total",
                 selected_heat_source="Air"
@@ -227,7 +213,7 @@ class TestGetResultDf:
 class TestSQLInjectionPrevention:
     """Tests to verify SQL injection is blocked."""
 
-    def test_sql_injection_building_type_blocked(self):
+    def test_sql_injection_building_type_blocked(self, sample_district_df_with_labels):
         """SQL injection in building_type is blocked by validation."""
         payloads = [
             "'; DROP TABLE data; --",
@@ -237,9 +223,9 @@ class TestSQLInjectionPrevention:
 
         for payload in payloads:
             with pytest.raises(InputValidationError):
-                get_result_df("Bayern", payload, "Air")
+                get_result_df(sample_district_df_with_labels, "Bayern", payload, "Air")
 
-    def test_sql_injection_heat_source_blocked(self):
+    def test_sql_injection_heat_source_blocked(self, sample_district_df_with_labels):
         """SQL injection in heat_source is blocked by validation."""
         payloads = [
             "'; DROP TABLE data; --",
@@ -248,9 +234,9 @@ class TestSQLInjectionPrevention:
 
         for payload in payloads:
             with pytest.raises(InputValidationError):
-                get_result_df("Bayern", "Total", payload)
+                get_result_df(sample_district_df_with_labels, "Bayern", "Total", payload)
 
-    def test_sql_injection_state_blocked(self):
+    def test_sql_injection_state_blocked(self, sample_district_df_with_labels):
         """SQL injection in state is blocked by validation."""
         payloads = [
             "Bayern'; DROP TABLE data; --",
@@ -259,35 +245,35 @@ class TestSQLInjectionPrevention:
 
         for payload in payloads:
             with pytest.raises(InputValidationError):
-                get_result_df(payload, "Total", "Air")
+                get_result_df(sample_district_df_with_labels, payload, "Total", "Air")
 
 
 class TestInvalidInputHandling:
     """Tests for invalid input handling."""
 
-    def test_empty_string_inputs_rejected(self):
+    def test_empty_string_inputs_rejected(self, sample_district_df_with_labels):
         """Empty string inputs should be rejected."""
         with pytest.raises(InputValidationError):
-            get_result_df("", "Total", "Air")
+            get_result_df(sample_district_df_with_labels, "", "Total", "Air")
 
         with pytest.raises(InputValidationError):
-            get_result_df("Bayern", "", "Air")
+            get_result_df(sample_district_df_with_labels, "Bayern", "", "Air")
 
         with pytest.raises(InputValidationError):
-            get_result_df("Bayern", "Total", "")
+            get_result_df(sample_district_df_with_labels, "Bayern", "Total", "")
 
-    def test_none_like_strings_rejected(self):
+    def test_none_like_strings_rejected(self, sample_district_df_with_labels):
         """String values like 'None' or 'null' should be rejected."""
         with pytest.raises(InputValidationError):
-            get_result_df("None", "Total", "Air")
+            get_result_df(sample_district_df_with_labels, "None", "Total", "Air")
 
         with pytest.raises(InputValidationError):
-            get_result_df("Bayern", "null", "Air")
+            get_result_df(sample_district_df_with_labels, "Bayern", "null", "Air")
 
-    def test_numeric_strings_rejected(self):
+    def test_numeric_strings_rejected(self, sample_district_df_with_labels):
         """Numeric strings should be rejected (codes must be mapped)."""
         with pytest.raises(InputValidationError):
-            get_result_df("Bayern", "1", "Air")  # Should be label, not code
+            get_result_df(sample_district_df_with_labels, "Bayern", "1", "Air")
 
         with pytest.raises(InputValidationError):
-            get_result_df("Bayern", "Total", "1")  # Should be label, not code
+            get_result_df(sample_district_df_with_labels, "Bayern", "Total", "1")

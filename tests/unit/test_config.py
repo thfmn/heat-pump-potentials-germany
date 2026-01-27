@@ -227,5 +227,5 @@ class TestURLConstants:
 
     def test_api_urls_contain_opendata_ids(self):
         """API URLs should contain the opendata ID parameter."""
-        assert "id_opendata=eq.87" in STATE_DATA_URL  # State-level data
-        assert "id_opendata=eq.88" in DISTRICT_DATA_URL  # District-level data
+        assert "id_opendata=87" in STATE_DATA_URL  # State-level data
+        assert "id_opendata=88" in DISTRICT_DATA_URL  # District-level data
