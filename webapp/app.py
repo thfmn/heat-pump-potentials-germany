@@ -50,6 +50,47 @@ if 'selected_building_type' not in st.session_state:
 if 'selected_heat_source' not in st.session_state:
     st.session_state.selected_heat_source = "Total"
 
+# Navigation state for drill-down hierarchy (VIZ-3)
+if 'nav_current_level' not in st.session_state:
+    st.session_state.nav_current_level = "germany"  # "germany" | "state" | "district"
+
+if 'nav_selected_state' not in st.session_state:
+    st.session_state.nav_selected_state = None  # None | state name
+
+if 'nav_selected_district' not in st.session_state:
+    st.session_state.nav_selected_district = None  # None | district name
+
+
+# Navigation helper functions for drill-down hierarchy (VIZ-3)
+def navigate_to_germany():
+    """Navigate to Germany-level view (top level)."""
+    st.session_state.nav_current_level = "germany"
+    st.session_state.nav_selected_state = None
+    st.session_state.nav_selected_district = None
+
+
+def navigate_to_state(state_name: str):
+    """Navigate to state-level view.
+
+    Args:
+        state_name: Name of the state to navigate to.
+    """
+    st.session_state.nav_current_level = "state"
+    st.session_state.nav_selected_state = state_name
+    st.session_state.nav_selected_district = None
+
+
+def navigate_to_district(state_name: str, district_name: str):
+    """Navigate to district-level detail view.
+
+    Args:
+        state_name: Name of the state containing the district.
+        district_name: Name of the district to navigate to.
+    """
+    st.session_state.nav_current_level = "district"
+    st.session_state.nav_selected_state = state_name
+    st.session_state.nav_selected_district = district_name
+
 
 def main():
     # Create navigation tabs
