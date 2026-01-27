@@ -12,6 +12,7 @@ import os
 
 import geopandas as gpd
 import pandas as pd
+import plotly.express as px
 import streamlit as st
 from config import (
     DISTRICT_DATA_SELECTION,
@@ -24,7 +25,11 @@ from data_manager import fetch_data, get_result_df, preprocess_data_germany, upd
 from logging_config import setup_logging
 from map_manager import create_germany_map, create_state_map, set_geographical_values
 from shapely import wkt
-from stats_manager import calculate_summary_stats, get_top_bottom_districts
+from stats_manager import (
+    calculate_summary_stats,
+    get_building_type_breakdown,
+    get_top_bottom_districts,
+)
 
 # Initialize logging
 logger = setup_logging()
@@ -228,6 +233,49 @@ def main():
             )
         else:
             st.info("No data available for the current selection.")
+
+        # Building type breakdown chart
+        st.subheader("Suitability by Building Type")
+        building_breakdown = get_building_type_breakdown(
+            df, selected_heat_source, state=selected_state
+        )
+
+        if not building_breakdown.empty:
+            # Define consistent colors for building types (green shades for suitability theme)
+            color_sequence = ['#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#3498db']
+
+            fig_building = px.bar(
+                building_breakdown,
+                x='avg_value',
+                y='building_type',
+                orientation='h',
+                color_discrete_sequence=color_sequence,
+                labels={
+                    'avg_value': 'Average Suitability (%)',
+                    'building_type': 'Building Type',
+                },
+                text='avg_value',
+            )
+
+            # Format text labels on bars
+            fig_building.update_traces(
+                texttemplate='%{text:.1f}%',
+                textposition='outside',
+            )
+
+            # Update layout for clean appearance
+            fig_building.update_layout(
+                xaxis_title='Average Suitability (%)',
+                yaxis_title='',
+                showlegend=False,
+                margin=dict(l=10, r=10, t=10, b=10),
+                xaxis=dict(range=[0, 100]),
+                height=250,
+            )
+
+            st.plotly_chart(fig_building, use_container_width=True)
+        else:
+            st.info("No building type data available for the current selection.")
 
 
 if __name__ == "__main__":
