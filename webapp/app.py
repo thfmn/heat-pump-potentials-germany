@@ -64,10 +64,21 @@ if 'nav_selected_district' not in st.session_state:
 if 'pending_state_navigation' not in st.session_state:
     st.session_state.pending_state_navigation = None  # None | state name to navigate to
 
+if 'pending_district_search' not in st.session_state:
+    st.session_state.pending_district_search = None  # None | (state, district) tuple
+
 # Apply pending navigation BEFORE any widgets are instantiated
 if st.session_state.pending_state_navigation is not None:
     st.session_state.selected_state = st.session_state.pending_state_navigation
     st.session_state.pending_state_navigation = None
+
+if st.session_state.pending_district_search is not None:
+    state, district = st.session_state.pending_district_search
+    st.session_state.selected_state = state
+    st.session_state.nav_current_level = "district"
+    st.session_state.nav_selected_state = state
+    st.session_state.nav_selected_district = district
+    st.session_state.pending_district_search = None
 
 
 # Navigation helper functions for drill-down hierarchy (VIZ-3)
@@ -332,6 +343,26 @@ def render_explorer_tab():
                                     key="selected_state"
                                     )
 
+        # District search (only at Germany level)
+        if selected_state == "(Deutschland)":
+            all_districts = load_all_districts()
+            district_options = [""] + sorted(all_districts.keys())
+
+            searched_district = st.selectbox(
+                "🔍 Search for a district",
+                options=district_options,
+                index=0,
+                placeholder="Type to search...",
+                help="Search and jump directly to any district in Germany",
+                key="district_search"
+            )
+
+            if searched_district and searched_district in all_districts:
+                state_of_district = all_districts[searched_district]
+                # Use pending navigation to avoid session_state modification error
+                st.session_state.pending_district_search = (state_of_district, searched_district)
+                st.rerun()
+
         if st.session_state.selected_state == "(Deutschland)":
             geojson_url = STATE_GEOJSON_URL
         else:
@@ -353,26 +384,6 @@ def render_explorer_tab():
                  options=df['heat_source'].unique(),
                  key="selected_heat_source"
                  )
-
-    # District search (only at Germany level)
-    if selected_state == "(Deutschland)":
-        all_districts = load_all_districts()
-        district_options = [""] + sorted(all_districts.keys())
-
-        searched_district = st.selectbox(
-            "🔍 Search for a district",
-            options=district_options,
-            index=0,
-            placeholder="Type to search...",
-            help="Search and jump directly to any district in Germany",
-            key="district_search"
-        )
-
-        if searched_district and searched_district in all_districts:
-            state_of_district = all_districts[searched_district]
-            st.session_state.selected_state = state_of_district
-            navigate_to_district(state_of_district, searched_district)
-            st.rerun()
 
     # Display map with click handling for drill-down navigation
     with col_map:
