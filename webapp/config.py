@@ -1,3 +1,28 @@
+"""Configuration constants for the Heat Pump Potentials Germany application.
+
+This module defines all configuration constants used throughout the application,
+including API endpoints, geographic data, and category mappings.
+
+Constants:
+    STATE_DATA_URL (str): FfE Open Data Portal API endpoint for state-level data
+        (id_opendata=87).
+    DISTRICT_DATA_URL (str): FfE Open Data Portal API endpoint for district-level
+        data (id_opendata=88).
+    STATE_GEOJSON_URL (str): URL to GeoJSON file containing Germany state boundaries.
+    DISTRICT_GEOJSON_URL (str): URL to GeoJSON file containing Germany district boundaries.
+    FEDERAL_STATES (list[str]): List of all 15 German federal states (excluding Berlin,
+        which lacks data).
+    DISTRICT_DATA_SELECTION (dict[str, str]): Mapping from state names to their
+        corresponding CSV data filenames.
+    STATE_GEO_VALUES (dict[str, tuple[float, float, float]]): Geographic center
+        coordinates and zoom levels for each state. Each tuple contains
+        (latitude, longitude, zoom_level).
+    BUILDING_TYPE_MAPPING (dict[int, str]): Mapping from FfE building type codes
+        to human-readable labels.
+    HEAT_SOURCE_MAPPING (dict[int, str]): Mapping from FfE heat source codes
+        to human-readable labels.
+"""
+
 STATE_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87"
 DISTRICT_DATA_URL = "https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.88"
 
