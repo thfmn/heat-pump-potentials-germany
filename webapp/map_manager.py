@@ -62,7 +62,8 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
 
     Returns:
         A plotly.graph_objects.Figure containing the configured choropleth map
-        with hover tooltips showing state names and suitability percentages.
+        with enhanced hover tooltips showing state name, suitability percentage,
+        building type, heat source, and rank within the current view.
     """
     lat, lon, zoom = 51.1657, 10.4515, 5
 
@@ -70,19 +71,37 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
         f"building_type == '{selected_building_type}' "
         f"& heat_source == '{selected_heat_source}'"
     )
-    fig = px.choropleth_mapbox(result_df.query(query_str),
-                            geojson=geojson_url,
-                            locations='region',
-                            color='value',
-                            featureidkey="properties.name",
-                            color_continuous_scale='Viridis',
-                            range_color=[0,1],
-                            mapbox_style="carto-darkmatter",
-                            opacity=1,
-                            hover_data={'value': True},
-                            hover_name=result_df['region']
-                            )
-    fig.update_traces(hovertemplate='%{hovertext}<br>%{z:.1%}')
+    filtered_df = result_df.query(query_str).copy()
+
+    # Calculate rank within current view (1 = highest value)
+    filtered_df['rank'] = filtered_df['value'].rank(ascending=False, method='min').astype(int)
+    total_count = len(filtered_df)
+
+    fig = px.choropleth_mapbox(
+        filtered_df,
+        geojson=geojson_url,
+        locations='region',
+        color='value',
+        featureidkey="properties.name",
+        color_continuous_scale='Viridis',
+        range_color=[0, 1],
+        mapbox_style="carto-darkmatter",
+        opacity=1,
+        hover_name='region',
+        custom_data=['rank', 'building_type', 'heat_source']
+    )
+
+    # Enhanced hover template with bold name, percentage, filters, and rank
+    fig.update_traces(
+        hovertemplate=(
+            "<b>%{hovertext}</b><br>"
+            "<b>Suitability:</b> %{z:.1%}<br>"
+            "<b>Building Type:</b> %{customdata[1]}<br>"
+            "<b>Heat Source:</b> %{customdata[2]}<br>"
+            "<b>Rank:</b> %{customdata[0]} of " + str(total_count) +
+            "<extra></extra>"
+        )
+    )
     fig.update_geos(fitbounds="locations")
     fig.update_layout(
         mapbox_zoom=zoom,
@@ -133,7 +152,8 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
 
     Returns:
         A plotly.graph_objects.Figure containing the configured choropleth map
-        with hover tooltips showing district names and suitability percentages.
+        with enhanced hover tooltips showing district name, suitability percentage,
+        building type, heat source, and rank within the current view.
     """
     lat, lon, zoom = set_geographical_values(selected_state)
 
@@ -142,34 +162,50 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
         f"& heat_source == '{selected_heat_source}' "
         f"& federal_state == '{selected_state}'"
     )
-    filtered_df = state_df.query(query_str)
+    filtered_df = state_df.query(query_str).copy()
+
+    # Calculate rank within current view (1 = highest value)
+    filtered_df['rank'] = filtered_df['value'].rank(ascending=False, method='min').astype(int)
+    total_count = len(filtered_df)
 
     geojson = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "properties": {"district": row.district, "district_type": row.district_type},
-            "geometry": mapping(row.geometry)
-        }
-        for idx, row in filtered_df.iterrows()
-    ]
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"district": row.district, "district_type": row.district_type},
+                "geometry": mapping(row.geometry)
+            }
+            for idx, row in filtered_df.iterrows()
+        ]
     }
 
-    fig = px.choropleth_mapbox(filtered_df,
-                            geojson=geojson,
-                            locations='district',
-                            featureidkey="properties.district",
-                            color='value',
-                            color_continuous_scale='Viridis',
-                            range_color=[0, 1],
-                            mapbox_style="carto-darkmatter",
-                            opacity=1,
-                            hover_name=filtered_df['district'],
-                            hover_data={'value': True}
-                           )
+    fig = px.choropleth_mapbox(
+        filtered_df,
+        geojson=geojson,
+        locations='district',
+        featureidkey="properties.district",
+        color='value',
+        color_continuous_scale='Viridis',
+        range_color=[0, 1],
+        mapbox_style="carto-darkmatter",
+        opacity=1,
+        hover_name='district',
+        custom_data=['rank', 'building_type', 'heat_source', 'district_type']
+    )
 
-    fig.update_traces(hovertemplate='%{hovertext}<br>%{z:.1%}')
+    # Enhanced hover template with bold name, percentage, filters, and rank
+    fig.update_traces(
+        hovertemplate=(
+            "<b>%{hovertext}</b><br>"
+            "<b>Suitability:</b> %{z:.1%}<br>"
+            "<b>Building Type:</b> %{customdata[1]}<br>"
+            "<b>Heat Source:</b> %{customdata[2]}<br>"
+            "<b>District Type:</b> %{customdata[3]}<br>"
+            "<b>Rank:</b> %{customdata[0]} of " + str(total_count) +
+            "<extra></extra>"
+        )
+    )
     fig.update_geos(fitbounds="locations")
     fig.update_layout(
         mapbox_zoom=zoom,
