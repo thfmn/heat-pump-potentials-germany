@@ -59,7 +59,7 @@ def main():
         render_explorer_tab()
 
     with tab_compare:
-        st.info("Compare tab - implementation pending (VIZ-2)")
+        render_compare_tab()
 
     with tab_insights:
         st.info("Insights tab - implementation pending (ML-3)")
@@ -291,6 +291,203 @@ def render_explorer_tab():
             st.plotly_chart(fig_building, use_container_width=True)
         else:
             st.info("No building type data available for the current selection.")
+
+
+def render_compare_tab():
+    """Render the Compare tab for comparing multiple states side-by-side."""
+    st.header("Compare States")
+    st.markdown("Select 2-4 states to compare their heat pump suitability side-by-side.")
+
+    # Filters row
+    col_select, col_building, col_heat = st.columns([2, 1, 1])
+
+    with col_select:
+        selected_states = st.multiselect(
+            "Select states to compare (2-4)",
+            options=sorted(FEDERAL_STATES),
+            default=[],
+            max_selections=4,
+            help="Select 2 to 4 states to compare their heat pump suitability.",
+            key="compare_selected_states",
+        )
+
+    with col_building:
+        compare_building_type = st.radio(
+            "Building type",
+            options=["Total", "One- and Two-family Houses", "Row Houses",
+                     "Semi-detached Houses", "Apartments (3-6 units)",
+                     "Apartments (7+ units)"],
+            key="compare_building_type",
+            horizontal=False,
+        )
+
+    with col_heat:
+        compare_heat_source = st.radio(
+            "Heat source",
+            options=["Total", "Air", "Ground Probe", "Ground Collector", "Solar-thermal"],
+            key="compare_heat_source",
+            horizontal=False,
+        )
+
+    # Validate selection count
+    if len(selected_states) < 2:
+        st.warning("Please select at least 2 states to compare.")
+        return
+
+    # Load data for selected states
+    state_data = {}
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    with st.spinner("Loading state data..."):
+        for state in selected_states:
+            try:
+                filename = DISTRICT_DATA_SELECTION.get(state)
+                data_path = os.path.join(dir_path, f"data/districts/{filename}")
+                df = pd.read_csv(data_path)
+                update_df_categories(df)
+                df['geometry'] = df['geometry'].apply(wkt.loads)
+                gdf = gpd.GeoDataFrame(df, geometry='geometry')
+                state_data[state] = gdf
+            except FileNotFoundError:
+                st.error(f"Data file not found for {state}.")
+                return
+            except Exception as e:
+                st.error(f"Failed to load data for {state}: {e}")
+                return
+
+    # Render side-by-side maps in responsive grid
+    st.subheader("Side-by-Side Comparison")
+    render_comparison_maps(
+        state_data, selected_states, compare_building_type, compare_heat_source
+    )
+
+    # Render comparison metrics table
+    st.subheader("Comparison Metrics")
+    render_comparison_table(
+        state_data, selected_states, compare_building_type, compare_heat_source
+    )
+
+
+def render_comparison_maps(state_data, selected_states, building_type, heat_source):
+    """Render side-by-side maps for the selected states.
+
+    Uses responsive grid layout:
+    - 2 states: 2 columns (1x2)
+    - 3 states: 3 columns (1x3)
+    - 4 states: 2x2 grid
+    """
+    num_states = len(selected_states)
+
+    if num_states == 2:
+        cols = st.columns(2)
+    elif num_states == 3:
+        cols = st.columns(3)
+    else:  # 4 states
+        # First row of 2
+        cols_row1 = st.columns(2)
+        cols_row2 = st.columns(2)
+        cols = cols_row1 + cols_row2
+
+    for idx, state in enumerate(selected_states):
+        gdf = state_data[state]
+        with cols[idx]:
+            st.markdown(f"**{state}**")
+            try:
+                fig = create_state_map(gdf, state, building_type, heat_source)
+                # Adjust map size for comparison view
+                fig.update_layout(
+                    width=None,
+                    height=400,
+                    margin=dict(l=0, r=0, t=0, b=0),
+                    coloraxis_showscale=(idx == 0),  # Only show color scale on first map
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            except Exception as e:
+                st.error(f"Failed to render map for {state}: {e}")
+
+
+def render_comparison_table(state_data, selected_states, building_type, heat_source):
+    """Render a comparison metrics table for selected states.
+
+    Shows metrics for each state including:
+    - Average Suitability
+    - Best District
+    - Worst District
+    - Standard Deviation
+    """
+    metrics_data = []
+
+    for state in selected_states:
+        gdf = state_data[state]
+        stats = calculate_summary_stats(gdf, building_type, heat_source)
+        top_districts, bottom_districts = get_top_bottom_districts(
+            gdf, building_type, heat_source, n=1
+        )
+
+        best_district = (
+            f"{top_districts.iloc[0]['district']} ({top_districts.iloc[0]['value']:.1f}%)"
+            if not top_districts.empty else "N/A"
+        )
+        worst_district = (
+            f"{bottom_districts.iloc[0]['district']} ({bottom_districts.iloc[0]['value']:.1f}%)"
+            if not bottom_districts.empty else "N/A"
+        )
+
+        metrics_data.append({
+            'State': state,
+            'Avg Suitability (%)': f"{stats['mean']:.1f}",
+            'Best District': best_district,
+            'Worst District': worst_district,
+            'Std Dev (%)': f"{stats['std']:.1f}",
+            'Districts': stats['count'],
+        })
+
+    # Create comparison DataFrame
+    comparison_df = pd.DataFrame(metrics_data)
+
+    # Determine rankings for each numeric metric
+    comparison_df['_avg_val'] = comparison_df['Avg Suitability (%)'].astype(float)
+    comparison_df['_std_val'] = comparison_df['Std Dev (%)'].astype(float)
+
+    # Sort to find rankings
+    sorted_by_avg = comparison_df.sort_values('_avg_val', ascending=False)
+    rank_map_avg = {
+        state: idx + 1 for idx, state in enumerate(sorted_by_avg['State'].values)
+    }
+
+    # Add rank suffixes to average suitability
+    def add_rank_indicator(row):
+        rank = rank_map_avg[row['State']]
+        if rank == 1:
+            return f"{row['Avg Suitability (%)']} 🥇"
+        elif rank == 2:
+            return f"{row['Avg Suitability (%)']} 🥈"
+        elif rank == 3:
+            return f"{row['Avg Suitability (%)']} 🥉"
+        else:
+            return row['Avg Suitability (%)']
+
+    comparison_df['Avg Suitability (%)'] = comparison_df.apply(add_rank_indicator, axis=1)
+
+    # Drop temporary columns
+    comparison_df = comparison_df.drop(columns=['_avg_val', '_std_val'])
+
+    # Display table
+    st.dataframe(
+        comparison_df,
+        column_config={
+            'State': st.column_config.TextColumn('State', width='medium'),
+            'Avg Suitability (%)': st.column_config.TextColumn(
+                'Avg Suitability (%)', width='small'
+            ),
+            'Best District': st.column_config.TextColumn('Best District', width='large'),
+            'Worst District': st.column_config.TextColumn('Worst District', width='large'),
+            'Std Dev (%)': st.column_config.TextColumn('Std Dev (%)', width='small'),
+            'Districts': st.column_config.NumberColumn('Districts', width='small'),
+        },
+        hide_index=True,
+        use_container_width=True,
+    )
 
 
 if __name__ == "__main__":
