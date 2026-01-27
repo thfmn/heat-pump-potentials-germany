@@ -54,6 +54,52 @@ pip install -e .
 streamlit run webapp/app.py
 ```
 
+## Usage Guide
+
+### Navigation
+
+When you launch the application, you'll see an interactive map of Germany with three filter controls at the top:
+
+1. **State Selection** (left dropdown)
+   - Select `(Deutschland)` to view the entire country at the state level
+   - Select any of the 16 federal states to drill down to district-level data
+   - The map automatically zooms and centers on your selection
+
+2. **Building Type** (center radio buttons)
+   - **Total** - All building types combined
+   - **One- and Two-family Houses** - Single-family detached homes
+   - **Row Houses** - Terraced housing
+   - **Semi-detached Houses** - Houses sharing a wall with one neighbor
+   - **Apartment Buildings (3-6)** - Small multi-family buildings
+   - **Apartment Buildings: 7 and More Apartments** - Larger multi-family buildings
+
+3. **Heat Source** (right radio buttons)
+   - **Total** - All heat pump types combined
+   - **Air** - Air-source heat pumps (most common, easiest to install)
+   - **Ground Probe** - Vertical borehole geothermal systems
+   - **Ground Collector** - Horizontal ground loop systems
+   - **Solar-Thermal Energy and Ice Storage** - Combined solar-thermal and heat pump systems
+
+### Interpreting the Map
+
+- **Color scale**: Regions are colored from red (low suitability, ~0%) to green (high suitability, ~100%)
+- **Hover information**: Move your mouse over any region to see detailed suitability percentages
+- **Values shown**: The percentage represents the proportion of buildings in that region that are suitable for the selected heat pump type
+
+### Example Workflows
+
+**Compare states for air-source heat pumps:**
+1. Keep `(Deutschland)` selected in the state dropdown
+2. Select "Air" as the heat source
+3. Select "Total" for building type
+4. Observe which states have the highest air-source heat pump potential
+
+**Analyze apartment building potential in a specific state:**
+1. Select a state (e.g., "Bayern") from the dropdown
+2. Select "Apartment Buildings (3-6)" as the building type
+3. Compare different heat sources to see which type works best
+4. Hover over districts to identify areas with highest potential
+
 ## Data Sources
 The data is retrieved from dedicated API endpoints provided by the [FfE Open Data Portal](https://opendata.ffe.de/), containing detailed information on heat pump potentials at the state and district levels. The geographical information essential for visualization is obtained from publicly available GeoJSON files.
 
