@@ -1,3 +1,132 @@
-webapp/__pycache__
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.uv/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Type checking & Linting
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# dbt
+heat_pump_dbt/target/
+heat_pump_dbt/dbt_packages/
+heat_pump_dbt/logs/
+*.duckdb
+*.duckdb.wal
+
+# IDE & Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Environment & Secrets - CRITICAL
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+*-credentials.json
+*_credentials.json
+service-account*.json
+sa-*.json
+gcp-key*.json
+secrets.yaml
+secrets.yml
+.secrets/
+
+# GCP specific
+.gcloud/
+application_default_credentials.json
+
+# Docker
+.docker/
+
+# Logs
+*.log
+logs/
+reports/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+
+# Large data files (keep CSVs in data/ but ignore raw downloads)
+raw_data/
+*.parquet
+*.feather
+
+# Streamlit
+.streamlit/secrets.toml
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Local development
+local/
+scratch/
+*.local
+
+# Project specific (from original)
 webapp/memory
 webapp/memory.wal
