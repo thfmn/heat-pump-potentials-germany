@@ -525,51 +525,53 @@ def render_explorer_tab():
         else:
             st.info("No building type data available for the current selection.")
 
-    # Top 10 / Bottom 10 tables (below the map for better readability)
-    st.divider()
-    table_col1, table_col2 = st.columns(2)
+    # Top 10 / Bottom 10 tables - only show at state level (not Germany level)
+    # At Germany level there are only 16 states, making top/bottom 10 redundant
+    if selected_state != "(Deutschland)":
+        st.divider()
+        table_col1, table_col2 = st.columns(2)
 
-    with table_col1:
-        st.subheader("Top 10 Districts")
-        if not top_districts.empty:
-            st.dataframe(
-                top_districts,
-                column_config={
-                    "rank": st.column_config.NumberColumn("Rank", width="small"),
-                    "district": st.column_config.TextColumn("District", width="medium"),
-                    "federal_state": st.column_config.TextColumn("State", width="medium"),
-                    "value": st.column_config.NumberColumn(
-                        "Suitability (%)",
-                        format="%.1f%%",
-                        width="small",
-                    ),
-                },
-                hide_index=True,
-                width="stretch",
-            )
-        else:
-            st.info("No data available for the current selection.")
+        with table_col1:
+            st.subheader("Top 10 Districts")
+            if not top_districts.empty:
+                st.dataframe(
+                    top_districts,
+                    column_config={
+                        "rank": st.column_config.NumberColumn("Rank", width="small"),
+                        "district": st.column_config.TextColumn("District", width="medium"),
+                        "federal_state": st.column_config.TextColumn("State", width="medium"),
+                        "value": st.column_config.NumberColumn(
+                            "Suitability (%)",
+                            format="%.1f%%",
+                            width="small",
+                        ),
+                    },
+                    hide_index=True,
+                    width="stretch",
+                )
+            else:
+                st.info("No data available for the current selection.")
 
-    with table_col2:
-        st.subheader("Bottom 10 Districts")
-        if not bottom_districts.empty:
-            st.dataframe(
-                bottom_districts,
-                column_config={
-                    "rank": st.column_config.NumberColumn("Rank", width="small"),
-                    "district": st.column_config.TextColumn("District", width="medium"),
-                    "federal_state": st.column_config.TextColumn("State", width="medium"),
-                    "value": st.column_config.NumberColumn(
-                        "Suitability (%)",
-                        format="%.1f%%",
-                        width="small",
-                    ),
-                },
-                hide_index=True,
-                width="stretch",
-            )
-        else:
-            st.info("No data available for the current selection.")
+        with table_col2:
+            st.subheader("Bottom 10 Districts")
+            if not bottom_districts.empty:
+                st.dataframe(
+                    bottom_districts,
+                    column_config={
+                        "rank": st.column_config.NumberColumn("Rank", width="small"),
+                        "district": st.column_config.TextColumn("District", width="medium"),
+                        "federal_state": st.column_config.TextColumn("State", width="medium"),
+                        "value": st.column_config.NumberColumn(
+                            "Suitability (%)",
+                            format="%.1f%%",
+                            width="small",
+                        ),
+                    },
+                    hide_index=True,
+                    width="stretch",
+                )
+            else:
+                st.info("No data available for the current selection.")
 
 
 def render_compare_tab():
