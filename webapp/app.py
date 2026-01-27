@@ -43,11 +43,12 @@ def main():
         data_path = os.path.join(dir_path, f"data/districts/{DISTRICT_DATA_SELECTION.get(selected_state)}")
 
         # Choose and process correct local data depending on state_selection from data/districts
-        df = pd.read_csv(data_path)
-        update_df_categories(df)
-        df['geometry'] = df['geometry'].apply(wkt.loads)
-        gdf = gpd.GeoDataFrame(df, geometry='geometry')
-        result_df = gdf
+        with st.spinner("Loading state data..."):
+            df = pd.read_csv(data_path)
+            update_df_categories(df)
+            df['geometry'] = df['geometry'].apply(wkt.loads)
+            gdf = gpd.GeoDataFrame(df, geometry='geometry')
+            result_df = gdf
 
     # Layout columns
     col_state, col_building, col_heat = st.columns(3)
