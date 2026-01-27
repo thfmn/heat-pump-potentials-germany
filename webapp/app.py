@@ -52,6 +52,21 @@ if 'selected_heat_source' not in st.session_state:
 
 
 def main():
+    # Create navigation tabs
+    tab_explorer, tab_compare, tab_insights = st.tabs(["Explorer", "Compare", "Insights"])
+
+    with tab_explorer:
+        render_explorer_tab()
+
+    with tab_compare:
+        st.info("Compare tab - implementation pending (VIZ-2)")
+
+    with tab_insights:
+        st.info("Insights tab - implementation pending (ML-3)")
+
+
+def render_explorer_tab():
+    """Render the Explorer tab with map and statistics."""
     selected_state = st.session_state.selected_state
     selected_building_type = st.session_state.selected_building_type
     selected_heat_source = st.session_state.selected_heat_source
