@@ -1,3 +1,14 @@
+"""Data management module for fetching, preprocessing, and querying heat pump data.
+
+This module handles all data operations including:
+- Fetching raw data from the FfE Open Data Portal API
+- Preprocessing and transforming API responses into clean DataFrames
+- Converting numeric category codes to human-readable labels
+- Executing filtered queries using DuckDB with parameterized SQL
+
+All database queries use parameterized placeholders to prevent SQL injection,
+and all user inputs are validated against allowed values before execution.
+"""
 import logging
 
 import duckdb

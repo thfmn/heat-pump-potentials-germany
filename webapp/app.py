@@ -1,3 +1,13 @@
+"""Main Streamlit application for the Heat Pump Potentials Germany dashboard.
+
+This module provides the user interface for visualizing heat pump suitability
+data across Germany at both state and district levels. Users can filter data
+by federal state, building type, and heat pump technology to explore which
+regions are most suitable for different heat pump installations.
+
+The application displays an interactive choropleth map and statistics panel,
+with data sourced from the FfE Open Data Portal (2022 dataset).
+"""
 import os
 
 import geopandas as gpd

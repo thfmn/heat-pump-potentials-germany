@@ -1,3 +1,14 @@
+"""Map generation module for creating interactive choropleth visualizations.
+
+This module provides functions for creating Plotly choropleth maps that
+display heat pump suitability data across Germany. It supports two map types:
+- Germany-wide maps showing state-level aggregations
+- State-level maps showing district-level detail
+
+Maps use a red-yellow-green color scale where green indicates higher
+suitability proportions. Geographic coordinates and zoom levels are
+configured per state for optimal visualization.
+"""
 import plotly.express as px
 from config import STATE_GEO_VALUES
 from shapely.geometry import mapping
