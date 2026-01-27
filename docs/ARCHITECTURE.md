@@ -120,6 +120,72 @@ sequenceDiagram
     UI-->>User: Display district-level map
 ```
 
+### Data Flow Pipeline: API → Transform → DuckDB → Plotly
+
+The data pipeline follows a four-stage process that transforms raw external data into interactive visualizations:
+
+#### Stage 1: API Data Acquisition
+
+For Germany-level views, data is fetched from the FfE Open Data Portal REST API:
+
+- **Endpoint**: `https://opendata.ffe.de/api/od/v_opendata?id_opendata=eq.87`
+- **Response**: JSON array containing heat pump suitability data aggregated at the state level
+- **Fields**: State identifier, building type code, heat source code, suitability value (0.0-1.0)
+
+For state-level views, pre-processed CSV files are loaded from local storage:
+
+- **Location**: `webapp/data/districts/{state_abbrev}_full_data.csv`
+- **Format**: CSV with district-level data including WKT geometry strings
+
+#### Stage 2: Data Transformation
+
+Raw data undergoes several transformation steps:
+
+1. **Preprocessing** (`preprocess_data_germany`):
+   - Extracts relevant fields from nested JSON structure
+   - Normalizes column names to consistent format
+   - Converts numeric fields to appropriate data types
+
+2. **Category Mapping** (`update_df_categories`):
+   - Replaces numeric building type codes with human-readable labels
+   - Replaces heat source codes with descriptive names
+   - Maps state abbreviations to full names
+
+3. **Geometry Processing** (state-level only):
+   - Parses WKT (Well-Known Text) geometry strings using Shapely
+   - Creates GeoPandas GeoDataFrame with proper CRS (coordinate reference system)
+
+#### Stage 3: DuckDB Query Engine
+
+Filtered data retrieval uses DuckDB for performant analytical queries:
+
+1. **Table Creation**: Transformed DataFrame is registered as an in-memory DuckDB table
+2. **Parameterized Queries**: User selections (building type, heat source, state) are passed as parameters
+3. **Input Validation**: All parameters are validated against allowed values before query execution
+4. **Result Extraction**: Query results are returned as a Pandas DataFrame
+
+Example query pattern:
+```sql
+SELECT federal_state, building_type, heat_source, value
+FROM data
+WHERE building_type = ? AND heat_source = ?
+```
+
+#### Stage 4: Plotly Visualization
+
+The filtered DataFrame is rendered as an interactive choropleth map:
+
+1. **Geographic Boundaries**:
+   - Germany view: GeoJSON fetched from external URL for state boundaries
+   - State view: Geometry extracted from GeoDataFrame district polygons
+
+2. **Map Construction** (`create_germany_map` / `create_state_map`):
+   - Joins suitability values to geographic features
+   - Applies color scale (RdYlGn: red=low, green=high suitability)
+   - Configures hover tooltips with district/state name and percentage
+
+3. **Rendering**: Plotly figure is embedded in Streamlit UI using `st.plotly_chart()`
+
 ## Module Descriptions
 
 ### `webapp/app.py`
