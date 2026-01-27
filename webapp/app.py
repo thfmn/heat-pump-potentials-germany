@@ -237,19 +237,37 @@ def render_explorer_tab():
                  key="selected_heat_source"
                  )
 
-    # Display map
+    # Display map with click handling for drill-down navigation
     with col_map:
         try:
             if selected_state == '(Deutschland)':
                 fig = create_germany_map(
                     result_df, selected_building_type, selected_heat_source, geojson_url
                 )
+                # Enable click events on Germany map for state navigation
+                event = st.plotly_chart(
+                    fig,
+                    use_container_width=True,
+                    key="germany_map",
+                    on_select="rerun",
+                    selection_mode=["points"],
+                )
+                # Handle click event - navigate to clicked state
+                if event and event.selection and event.selection.points:
+                    clicked_point = event.selection.points[0]
+                    # The 'location' field contains the region name (state name)
+                    clicked_state = clicked_point.get("location")
+                    if clicked_state and clicked_state in FEDERAL_STATES:
+                        # Update session state to show the clicked state
+                        st.session_state.selected_state = clicked_state
+                        navigate_to_state(clicked_state)
+                        st.rerun()
             else:
                 fig = create_state_map(
                     result_df, selected_state, selected_building_type, selected_heat_source
                 )
 
-            st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
         except Exception as e:
             logger.exception("Failed to render map: %s", str(e))
             st.error(f"Failed to render map: {str(e)}")

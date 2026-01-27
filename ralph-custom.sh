@@ -53,7 +53,24 @@ We have a $10 budget total. We MUST NOT exceed this. BEFORE running ANY Google C
 2. Get current timestamp by running: python3 scripts/get_timestamp.py (returns yyyy-MM-dd HH:mm:ss in Asia/Bangkok timezone)\n\
 3. Log in progress.txt: timestamp + "START: [task name]"\n\
 4. Implement ONLY that single checkbox. Nothing else.\n\
-5. Check off [x] that ONE checkbox in ISSUES.md.\n\
+5a. Check off [x] that ONE (MAIN task-)checkbox in ISSUES.md.\n\
+
+This means you are allowed to work on all tasks associated with "Clean `notebooks/district_map_generation.ipynb`" in the following example in a single session, if the complexity is not medium-high. Should one sub-task contain a high-complexity task, break it up before working on it. 
+
+**Tasks**:
+- [x] Clean `notebooks/district_map_generation.ipynb`:
+  - [x] Clear all output cells (Cell → All Output → Clear)
+  - [x] Add markdown cell at top: Title, Purpose, Author, Date
+  - [x] Add Table of Contents markdown cell
+  - [x] Section 1: "Data Fetching" - explain FfE API
+  - [x] Section 2: "Data Transformation" - explain preprocessing
+  - [x] Section 3: "Geometry Processing" - explain WKT handling
+  - [x] Section 4: "Export" - explain CSV generation
+  - [x] Add inline comments explaining complex operations
+  - [x] Verify notebook runs end-to-end without errors
+
+
+5b. Check off ALL acceptance criterea when reached. Do not move on when acceptance criterea for a feature are not satisfied.
 6. Get timestamp again and log in progress.txt: timestamp + "DONE: [task name]"\n\
 7. Commit your changes often.\n\
 8. Use context7 MCP for library docs before you start coding with any library or framework.\n\
