@@ -37,9 +37,6 @@ logger = setup_logging()
 # Set the layout configuration of the Streamlit app
 st.set_page_config(layout="wide")
 
-# DEBUG DataFrame Conversion
-pd.set_option('io.parquet.engine', 'pyarrow')
-
 # Initialize session states
 if 'selected_state' not in st.session_state:
     st.session_state.selected_state = "(Deutschland)"
