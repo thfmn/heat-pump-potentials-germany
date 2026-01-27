@@ -142,16 +142,19 @@ class TestGetTopBottomDistricts:
             assert col in top.columns
             assert col in bottom.columns
 
-    def test_rank_starts_at_one(self, sample_stats_df):
-        """Test that rank starts at 1."""
+    def test_rank_values(self, sample_stats_df):
+        """Test that top rank starts at 1 and bottom rank reflects actual position."""
         top, bottom = get_top_bottom_districts(
             sample_stats_df,
             'One- and Two-family Houses',
             'Air',
             n=5,
         )
+        # Top districts rank 1, 2, 3...
         assert top.iloc[0]['rank'] == 1
-        assert bottom.iloc[0]['rank'] == 1
+        # Bottom districts rank reflects actual position (worst is highest rank number)
+        # With 2 matching records, bottom rank should be 2 (the worst)
+        assert bottom.iloc[0]['rank'] == len(bottom)
 
     def test_empty_filter_returns_empty_dataframes(self, sample_stats_df):
         """Test that empty filter returns empty DataFrames."""
