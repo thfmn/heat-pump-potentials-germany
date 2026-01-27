@@ -492,6 +492,8 @@ def render_explorer_tab():
         )
 
         if not building_breakdown.empty:
+            # Sort by value descending so highest suitability appears at top
+            building_breakdown = building_breakdown.sort_values('avg_value', ascending=True)
             fig_building = px.bar(
                 building_breakdown,
                 x='avg_value',
@@ -572,6 +574,39 @@ def render_explorer_tab():
                 )
             else:
                 st.info("No data available for the current selection.")
+    else:
+        # Germany level - show full state ranking (all 16 states)
+        st.divider()
+        st.subheader("State Ranking")
+
+        # Combine top and bottom to get full ranking, or use top_districts with n=16
+        full_ranking = get_top_bottom_districts(
+            df, selected_building_type, selected_heat_source, n=16
+        )[0]  # Get top 16 (all states)
+
+        if not full_ranking.empty:
+            # Rename 'district' column to 'state' for clarity at Germany level
+            display_df = full_ranking.rename(columns={'district': 'state'})
+            # Drop federal_state column as it's redundant at Germany level
+            if 'federal_state' in display_df.columns:
+                display_df = display_df.drop(columns=['federal_state'])
+
+            st.dataframe(
+                display_df,
+                column_config={
+                    "rank": st.column_config.NumberColumn("Rank", width="small"),
+                    "state": st.column_config.TextColumn("Federal State", width="large"),
+                    "value": st.column_config.NumberColumn(
+                        "Suitability (%)",
+                        format="%.1f%%",
+                        width="medium",
+                    ),
+                },
+                hide_index=True,
+                width="stretch",
+            )
+        else:
+            st.info("No ranking data available for the current selection.")
 
 
 def render_compare_tab():
