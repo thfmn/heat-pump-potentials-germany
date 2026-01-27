@@ -3,12 +3,47 @@ from config import STATE_GEO_VALUES
 from shapely.geometry import mapping
 
 
-# Set longitude and latitude (center) and zoom for each state selection
 def set_geographical_values(selected_state):
+    """Get geographic coordinates and zoom level for a selected state.
+
+    Retrieves the latitude, longitude, and zoom level for centering the map
+    on the specified German state. Falls back to Germany-wide coordinates
+    if the state is not found in the configuration.
+
+    Args:
+        selected_state: Name of the German federal state (e.g., "Bayern",
+            "Nordrhein-Westfalen") or "(Deutschland)" for the whole country.
+
+    Returns:
+        A tuple of (latitude, longitude, zoom) where:
+            - latitude: Float for map center latitude
+            - longitude: Float for map center longitude
+            - zoom: Integer zoom level for the map display
+    """
     return STATE_GEO_VALUES.get(selected_state, STATE_GEO_VALUES["(Deutschland)"])
 
-# Create and display map with choropleth layer
 def create_germany_map(result_df, selected_building_type, selected_heat_source, geojson_url):
+    """Create a choropleth map of Germany showing heat pump suitability by state.
+
+    Generates an interactive Plotly choropleth map displaying the proportion
+    of buildings suitable for the selected heat pump type across all German
+    federal states. The map uses a red-yellow-green color scale where green
+    indicates higher suitability.
+
+    Args:
+        result_df: pandas DataFrame containing the state-level data with columns:
+            - region: State name matching GeoJSON feature names
+            - building_type: Building category (e.g., "Gesamt", "Ein- und Zweifamilienhaus")
+            - heat_source: Heat pump type (e.g., "Gesamt", "Luft")
+            - value: Suitability proportion (0.0-1.0)
+        selected_building_type: Building type to filter and display.
+        selected_heat_source: Heat source type to filter and display.
+        geojson_url: URL to the GeoJSON file containing Germany state boundaries.
+
+    Returns:
+        A plotly.graph_objects.Figure containing the configured choropleth map
+        with hover tooltips showing state names and suitability percentages.
+    """
     lat, lon, zoom = 51.1657, 10.4515, 5
 
     query_str = (
@@ -51,6 +86,35 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
 
 
 def create_state_map(state_df, selected_state, selected_building_type, selected_heat_source):
+    """Create a choropleth map of a German state showing heat pump suitability by district.
+
+    Generates an interactive Plotly choropleth map displaying the proportion
+    of buildings suitable for the selected heat pump type across all districts
+    (Kreise and kreisfreie Städte) within the specified German federal state.
+    The map uses a red-yellow-green color scale where green indicates higher
+    suitability.
+
+    The function dynamically creates GeoJSON features from the WKT geometry
+    stored in the DataFrame, allowing district-level visualization without
+    requiring external GeoJSON files for each state.
+
+    Args:
+        state_df: GeoDataFrame containing district-level data with columns:
+            - district: District name (Kreis or kreisfreie Stadt)
+            - district_type: Type of district ("Kreis", "Kreisfreie Stadt", etc.)
+            - building_type: Building category
+            - heat_source: Heat pump type
+            - value: Suitability proportion (0.0-1.0)
+            - federal_state: Name of the federal state
+            - geometry: Shapely geometry object (parsed from WKT)
+        selected_state: Name of the German federal state to display.
+        selected_building_type: Building type to filter and display.
+        selected_heat_source: Heat source type to filter and display.
+
+    Returns:
+        A plotly.graph_objects.Figure containing the configured choropleth map
+        with hover tooltips showing district names and suitability percentages.
+    """
     lat, lon, zoom = set_geographical_values(selected_state)
 
     query_str = (
