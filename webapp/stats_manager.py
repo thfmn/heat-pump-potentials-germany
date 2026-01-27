@@ -139,15 +139,15 @@ def get_top_bottom_districts(
         'value': (top_n['value'] * 100).round(1).values,
     })
 
-    # Create bottom N dataframe (sorted ascending, so worst first)
-    # Ranks reflect actual position: if 45 total, bottom 10 shows ranks 45, 44, 43...36
+    # Create bottom N dataframe (sorted descending, so worst at bottom)
+    # Ranks reflect actual position: if 45 total, bottom 10 shows ranks 36, 37...45
     total_count = len(sorted_df)
-    bottom_n = sorted_df.tail(n).sort_values('value', ascending=True).reset_index(drop=True)
+    bottom_n = sorted_df.tail(n).sort_values('value', ascending=False).reset_index(drop=True)
     bottom_state_vals = (
         bottom_n[region_col].values if region_col in bottom_n.columns else [''] * len(bottom_n)
     )
-    # Calculate actual ranks (worst is total_count, then total_count-1, etc.)
-    actual_ranks = list(range(total_count, total_count - len(bottom_n), -1))
+    # Calculate actual ranks (starts at total-n+1, ends at total for worst)
+    actual_ranks = list(range(total_count - len(bottom_n) + 1, total_count + 1))
     bottom_df = pd.DataFrame({
         'rank': actual_ranks,
         'district': bottom_n[district_col].values,

@@ -118,16 +118,17 @@ class TestGetTopBottomDistricts:
         assert top.iloc[0]['district'] == 'Augsburg'  # 0.82 is highest
         assert top.iloc[0]['value'] == 82.0
 
-    def test_bottom_districts_sorted_ascending(self, sample_stats_df):
-        """Test that bottom districts are sorted by value ascending."""
+    def test_bottom_districts_sorted_descending(self, sample_stats_df):
+        """Test that bottom districts are sorted by value descending (worst at bottom)."""
         _, bottom = get_top_bottom_districts(
             sample_stats_df,
             'One- and Two-family Houses',
             'Air',
             n=5,
         )
-        assert bottom.iloc[0]['district'] == 'Munich'  # 0.75 is lowest of the two
-        assert bottom.iloc[0]['value'] == 75.0
+        # Worst (lowest value) should be at bottom of the table
+        assert bottom.iloc[-1]['district'] == 'Munich'  # 0.75 is lowest of the two
+        assert bottom.iloc[-1]['value'] == 75.0
 
     def test_has_required_columns(self, sample_stats_df):
         """Test that result has required columns."""
@@ -152,9 +153,9 @@ class TestGetTopBottomDistricts:
         )
         # Top districts rank 1, 2, 3...
         assert top.iloc[0]['rank'] == 1
-        # Bottom districts rank reflects actual position (worst is highest rank number)
-        # With 2 matching records, bottom rank should be 2 (the worst)
-        assert bottom.iloc[0]['rank'] == len(bottom)
+        # Bottom districts rank reflects actual position (worst at bottom has highest rank)
+        # With 2 matching records, last row should have rank 2 (the worst)
+        assert bottom.iloc[-1]['rank'] == len(bottom)
 
     def test_empty_filter_returns_empty_dataframes(self, sample_stats_df):
         """Test that empty filter returns empty DataFrames."""
