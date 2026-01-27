@@ -1,2 +1,3 @@
-libgdal-dev
-gdal-bin
+# System dependencies for geopandas spatial operations
+# Note: geopandas wheel includes most dependencies, these are fallbacks
+libspatialindex-dev
