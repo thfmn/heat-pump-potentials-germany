@@ -15,6 +15,8 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 from config import (
+    CHART_COLORS_GREEN,
+    CHART_COLORS_HEAT,
     DISTRICT_DATA_SELECTION,
     DISTRICT_GEOJSON_URL,
     FEDERAL_STATES,
@@ -464,15 +466,12 @@ def render_explorer_tab():
         )
 
         if not building_breakdown.empty:
-            # Define consistent colors for building types (green shades for suitability theme)
-            color_sequence = ['#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#3498db']
-
             fig_building = px.bar(
                 building_breakdown,
                 x='avg_value',
                 y='building_type',
                 orientation='h',
-                color_discrete_sequence=color_sequence,
+                color_discrete_sequence=CHART_COLORS_GREEN,
                 labels={
                     'avg_value': 'Average Suitability (%)',
                     'building_type': 'Building Type',
@@ -672,15 +671,12 @@ def render_district_detail_view(df, state_name, district_name):
             # Convert to percentage
             building_data['value_pct'] = building_data['value'] * 100
 
-            # Define color sequence
-            color_sequence = ['#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#3498db', '#2980b9']
-
             fig_building = px.bar(
                 building_data,
                 x='value_pct',
                 y='building_type',
                 orientation='h',
-                color_discrete_sequence=color_sequence,
+                color_discrete_sequence=CHART_COLORS_GREEN,
                 labels={
                     'value_pct': 'Suitability (%)',
                     'building_type': 'Building Type',
@@ -719,15 +715,12 @@ def render_district_detail_view(df, state_name, district_name):
             # Convert to percentage
             heat_data['value_pct'] = heat_data['value'] * 100
 
-            # Define color sequence for heat sources
-            color_sequence = ['#e74c3c', '#e67e22', '#f1c40f', '#9b59b6', '#1abc9c']
-
             fig_heat = px.bar(
                 heat_data,
                 x='value_pct',
                 y='heat_source',
                 orientation='h',
-                color_discrete_sequence=color_sequence,
+                color_discrete_sequence=CHART_COLORS_HEAT,
                 labels={
                     'value_pct': 'Suitability (%)',
                     'heat_source': 'Heat Source',
