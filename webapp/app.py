@@ -161,7 +161,7 @@ def main():
         ### Germany's Path to Climate-Neutral Heating
 
         As Germany pursues its ambitious goal of carbon neutrality by 2045, the building
-        sector—responsible for nearly 30% of the nation's energy consumption—faces a
+        sector, responsible for nearly 30% of the nation's energy consumption, faces a
         fundamental transformation. Heat pumps have emerged as the cornerstone technology
         for decarbonizing residential heating, but their viability varies dramatically
         across regions, building types, and installation methods.
@@ -176,16 +176,16 @@ def main():
         ### Understanding "Suitability"
 
         **The percentage shown for each region represents the share of buildings that
-        could technically accommodate a heat pump installation** — based on factors
+        could technically accommodate a heat pump installation** - based on factors
         including building age, insulation levels, available outdoor space, and
         compatibility with existing heating infrastructure.
 
         | Suitability | Interpretation |
         |-------------|----------------|
-        | **75–100%** | Excellent potential — most buildings are suitable |
-        | **50–75%** | Good potential — majority could install heat pumps |
-        | **25–50%** | Moderate potential — significant barriers exist for many buildings |
-        | **0–25%** | Limited potential — few buildings meet technical requirements |
+        | **75-100%** | Excellent potential - most buildings are suitable |
+        | **50-75%** | Good potential - majority could install heat pumps |
+        | **25-50%** | Moderate potential - significant barriers exist for many buildings |
+        | **0-25%** | Limited potential - few buildings meet technical requirements |
 
         *Important: Technical suitability does not account for economic feasibility,
         homeowner preferences, or local grid capacity constraints.*
@@ -201,7 +201,7 @@ def main():
         - Click any region on the map to drill down to district-level detail
 
         **Compare Tab**
-        - Select 2–4 states for side-by-side comparison
+        - Select 2-4 states for side-by-side comparison
         - Identify regional leaders and understand geographic patterns
 
         ---
