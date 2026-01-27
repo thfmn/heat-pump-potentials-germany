@@ -110,14 +110,15 @@ def create_germany_map(result_df, selected_building_type, selected_heat_source, 
         width=800,
         height=800,
         coloraxis_colorbar=dict(
-        title="Anteil in %",
-        tickvals=[0, 0.25, 0.5, 0.75, 1],
-        ticktext=['0%', '25%', '50%', '75%', '100%'],
-        x=0.5,
-        y=0,
-        xanchor='center',
-        orientation='h',
-        len=0.7
+            title="Heat Pump Suitability (%)",
+            tickvals=[0, 0.25, 0.5, 0.75, 1],
+            ticktext=['0%', '25%', '50%', '75%', '100%'],
+            x=1.02,
+            y=0.5,
+            xanchor='left',
+            yanchor='middle',
+            orientation='v',
+            len=0.75
         )
     )
 
@@ -214,14 +215,15 @@ def create_state_map(state_df, selected_state, selected_building_type, selected_
         width=800,
         height=800,
         coloraxis_colorbar=dict(
-        title="Anteil in %",
-        tickvals=[0, 0.25, 0.5, 0.75, 1],
-        ticktext=['0%', '25%', '50%', '75%', '100%'],
-        x=0.5,
-        y=0,
-        xanchor='center',
-        orientation='h',
-        len=0.7
+            title="Heat Pump Suitability (%)",
+            tickvals=[0, 0.25, 0.5, 0.75, 1],
+            ticktext=['0%', '25%', '50%', '75%', '100%'],
+            x=1.02,
+            y=0.5,
+            xanchor='left',
+            yanchor='middle',
+            orientation='v',
+            len=0.75
         )
     )
 
