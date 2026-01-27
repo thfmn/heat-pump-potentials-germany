@@ -137,3 +137,10 @@ PRD-TEMPLATE.md
 PROGRESS-TEMPLATE.txt
 CLAUDE.md
 progress.txt
+*-finished-*.txt
+
+# Personal automation scripts - not part of project
+ralph-custom.sh
+ralph*.sh
+scripts/stream_filter.py
+scripts/get_timestamp.py
