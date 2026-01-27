@@ -60,6 +60,16 @@ if 'nav_selected_state' not in st.session_state:
 if 'nav_selected_district' not in st.session_state:
     st.session_state.nav_selected_district = None  # None | district name
 
+# Pending state for map click navigation (applied BEFORE widget instantiation)
+# This pattern avoids "cannot modify session_state after widget instantiation" error
+if 'pending_state_navigation' not in st.session_state:
+    st.session_state.pending_state_navigation = None  # None | state name to navigate to
+
+# Apply pending navigation BEFORE any widgets are instantiated
+if st.session_state.pending_state_navigation is not None:
+    st.session_state.selected_state = st.session_state.pending_state_navigation
+    st.session_state.pending_state_navigation = None
+
 
 # Navigation helper functions for drill-down hierarchy (VIZ-3)
 def navigate_to_germany():
@@ -195,7 +205,7 @@ def render_explorer_tab():
                 df = preprocess_data_germany(raw_json)
                 update_df_categories(df)
                 result_df = get_result_df(
-                    selected_state, selected_building_type, selected_heat_source
+                    df, selected_state, selected_building_type, selected_heat_source
                 )
         else:
             # Get the absolute path of the directory where app.py is located
@@ -281,8 +291,9 @@ def render_explorer_tab():
                     # The 'location' field contains the region name (state name)
                     clicked_state = clicked_point.get("location")
                     if clicked_state and clicked_state in FEDERAL_STATES:
-                        # Update session state to show the clicked state
-                        st.session_state.selected_state = clicked_state
+                        # Use pending state pattern to avoid "cannot modify after widget" error
+                        # The pending state is applied BEFORE widget instantiation on next rerun
+                        st.session_state.pending_state_navigation = clicked_state
                         navigate_to_state(clicked_state)
                         st.rerun()
             else:
