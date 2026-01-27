@@ -1,0 +1,17 @@
+[project]
+name = "heat-pump-potentials-germany"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit>=1.22.0",
+    "pandas>=1.5.3",
+    "requests>=2.29.0",
+    "duckdb>=0.8.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
