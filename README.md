@@ -24,6 +24,30 @@ Germany has committed to ambitious climate targets, including carbon neutrality 
 
 By making this data accessible through an interactive visualization, the application enables data-driven decision-making for Germany's energy transition (Energiewende).
 
+## Screenshots
+
+### Explorer View - Germany Level
+![Germany Map View](docs/screenshots/germany_map.png)
+*Choropleth map showing heat pump suitability across all 16 German federal states with Viridis colorblind-friendly color scale.*
+
+### Explorer View - State Level (Drill-Down)
+![State Map View](docs/screenshots/state_map.png)
+*District-level detail view after clicking on a state, showing suitability percentages for each district.*
+
+### District Detail View
+![District Detail](docs/screenshots/district_detail.png)
+*Detailed breakdown for a single district showing building type and heat source suitability charts.*
+
+### Compare Tab - Side-by-Side State Comparison
+![Compare View](docs/screenshots/compare_view.png)
+*Multi-state comparison view with synchronized maps and metrics table showing rankings.*
+
+### Statistics Panel
+![Statistics Panel](docs/screenshots/statistics_panel.png)
+*Summary statistics, top/bottom district tables, and building type breakdown chart.*
+
+> **Note**: To generate screenshots, run the application locally and capture the views described above. Save images to `docs/screenshots/` directory.
+
 ## Installation
 
 ```bash
