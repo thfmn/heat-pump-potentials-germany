@@ -48,14 +48,6 @@ def main():
         gdf = gpd.GeoDataFrame(df, geometry='geometry')
         result_df = gdf
 
-    # ------------- DEBUG---------------
-    #st.dataframe(result_df)
-    # ------------- /DEBUG---------------
-
-    # Create Streamlit frontend
-    #st.title("Heatpump Potentials in Germany")
-    #st.divider()
-
     # Layout columns
     col_state, col_building, col_heat = st.columns(3)
     col_map, col_stats = st.columns([0.7, 0.3])
